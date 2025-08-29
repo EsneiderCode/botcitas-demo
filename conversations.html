@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WhatsApp - Mockup iPhone</title>
+        <!-- Integración de @sneas/telephone -->
+        <script defer
+            src="https://cdn.jsdelivr.net/npm/@sneas/telephone@1/iphone-16-max.js"></script>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #3b4a54;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ========== PHONE CONTAINER ========== */
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        iphone-16-max {
+            --frame-color: #1d1d1f;
+            transform: scale(0.85);
+            filter: drop-shadow(0 25px 50px rgba(0,0,0,0.3));
+        }
+
+        /* ========== WHATSAPP CONTENT ========== */
+        .whatsapp-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            /* Padding para respetar el status bar del iPhone */
+            padding-top: 47px;
+        }
+
+        .chat-header {
+            background: #f0f2f5;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 56px;
+            color: #111b21;
+            flex-shrink: 0;
+            border-bottom: 1px solid #e9edef;
+        }
+
+        .header-back-btn {
+            background-image: url('https://prankshit.com/es/whatsapp/images/iphone-arrow.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: -4px;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            border: none;
+            background-color: transparent;
+        }
+
+        .header-back-btn:hover {
+            background-color: rgba(84, 101, 111, 0.1);
+        }
+
+        .chat-contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-image: url('https://stadtallendorf.de/media/custom/2605_7400_1_g.PNG?1642425208');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .chat-contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-contact-name {
+            font-size: 14px;
+            font-weight: 400;
+            color: #111b21;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 20px;
+        }
+        
+        .chat-contact-name-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .verified-badge {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #1da1f2;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .verified-badge::before {
+            content: "✓";
+            display: inline-block;
+        }
+
+        .chat-status {
+            font-size: 12px;
+            color: #667781;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            align-items: center;
+        }
+
+        .call-video-icons {
+            background-image: url('https://prankshit.com/es/whatsapp/images/iphone-header-left.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 45px;
+            height: 18px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            transition: opacity 0.2s;
+        }
+
+        .call-video-icons:hover {
+            opacity: 0.7;
+        }
+
+        .chat-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: #54656f;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            font-size: 16px;
+            padding: 0;
+        }
+
+        .chat-btn:hover {
+            background: rgba(84, 101, 111, 0.1);
+        }
+
+        .menu-icon::before {
+            content: "⋮";
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            /* Fondo real de WhatsApp desde imagen */
+            background-color: #e5ddd5;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-size: 512px 512px;
+            background-repeat: repeat;
+            background-position: 0 0;
+            padding: 16px 12px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            min-width: 80px;
+            position: relative;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+        }
+
+        .message.received .message-bubble {
+            background: #ffffff;
+            border-radius: 7.5px 7.5px 7.5px 0;
+            color: #111b21;
+        }
+
+        .message.sent .message-bubble {
+            background: #d9fdd3;
+            border-radius: 7.5px 7.5px 0 7.5px;
+            color: #111b21;
+        }
+
+        .message-content {
+            padding: 6px 7px 8px 9px;
+            word-wrap: break-word;
+            font-size: 14.2px;
+            line-height: 19px;
+        }
+
+        .message-info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 4px;
+            padding: 0 7px 6px;
+        }
+
+        .message-timestamp {
+            font-size: 11px;
+            color: #667781;
+            white-space: nowrap;
+        }
+
+        .message.sent .message-timestamp {
+            color: #667781;
+        }
+
+        .message-status-icon {
+            background-image: url('https://prankshit.com/es/whatsapp/images/check-read.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 16px;
+            height: 12px;
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        /* Input area auténtico */
+        .iphone_footer_content {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            background: #f0f2f5;
+            border-top: 1px solid #e9edef;
+            flex-shrink: 0;
+        }
+
+        .iphone_footer_img {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .iphone_footer_img img {
+            height: 18px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .iphone_footer_text_input {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border: 0.2px solid #b2b2b2b0;
+            border-radius: 20px;
+            padding: 5px 10px;
+            min-height: 35px;
+            position: relative;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+            color: #3b4a54;
+            background: transparent;
+            padding: 5px;
+            max-width: 125px;
+        }
+
+        .chat-input::placeholder {
+            color: #8696a0;
+        }
+
+        .iphone_footer_whatsapp_recoder {
+            margin-left: auto;
+        }
+
+        .iphone_footer_whatsapp_recoder img {
+            height: 18px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .iphone_footer_whatsapp_comment_bar {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .iphone_footer_whatsapp_comment_bar img {
+            height: 21px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .chat-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: calc(100% - 47px);
+            flex-direction: column;
+            color: #667781;
+            text-align: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .placeholder-icon {
+            font-size: 100px;
+            opacity: 0.3;
+            color: #667781;
+        }
+
+        .placeholder-text {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: #667781;
+        }
+
+        .placeholder-subtitle {
+            font-size: 14px;
+            color: #8696a0;
+            line-height: 20px;
+            max-width: 300px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667781;
+            font-size: 14px;
+        }
+
+        /* Scrollbar personalizado */
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 2px;
+        }
+
+        /* Botón de navegación */
+        .nav-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #075e54;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            iphone-16-max {
+                transform: scale(0.7);
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            iphone-16-max {
+                transform: scale(0.6);
+            }
+            
+            .nav-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+
+        /* Asegurar que el contenido llene el teléfono */
+        iphone-16-max::part(content) {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Botones de respuesta rápida - Estilo WhatsApp Business API oficial */
+        .quick-replies {
+            padding: 8px 12px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: transparent;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .quick-reply-button {
+            background: transparent;
+            border: 1px solid #d1d7db;
+            border-radius: 20px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 400;
+            color: #0084ff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: center;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 16px;
+            box-shadow: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .quick-reply-button:hover {
+            background: rgba(0, 132, 255, 0.05);
+            border-color: #0084ff;
+        }
+
+        .quick-reply-button:active {
+            background: rgba(0, 132, 255, 0.1);
+            transform: scale(0.98);
+        }
+
+        .quick-reply-button.selected {
+            background: rgba(0, 132, 255, 0.1);
+            border-color: #0084ff;
+            color: #0084ff;
+        }
+
+        /* Botones en fila para algunas opciones */
+        .quick-replies.horizontal {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quick-replies.horizontal .quick-reply-button {
+            flex: 1;
+            min-width: 100px;
+            max-width: 140px;
+        }
+
+        /* Estilo especial para botones de confirmación - mantiene el azul estándar */
+        .quick-reply-button.confirm {
+            background: #0084ff;
+            color: white;
+            border-color: #0084ff;
+            font-weight: 500;
+        }
+
+        .quick-reply-button.confirm:hover {
+            background: #0066cc;
+            border-color: #0066cc;
+        }
+
+        .quick-reply-button.cancel {
+            background: transparent;
+            color: #0084ff;
+            border-color: #d1d7db;
+        }
+
+        .quick-reply-button.cancel:hover {
+            background: rgba(0, 132, 255, 0.05);
+            border-color: #0084ff;
+        }
+
+        /* Ajuste para que se vean como botones reales de WhatsApp */
+        .quick-reply-button:not(.horizontal) {
+            max-width: 100%;
+        }
+    </style>
+    </head>
+    <body>
+        <a href="/" class="nav-btn">
+            📊 Panel Principal
+        </a>
+
+        <div class="phone-wrapper">
+            <iphone-16-max mode="light">
+                <div class="whatsapp-content">
+                    <div class="chat-placeholder" id="chatPlaceholder">
+                        <div class="placeholder-icon">💬</div>
+                        <div class="placeholder-text">WhatsApp</div>
+                        <div class="placeholder-subtitle">
+                            Selecciona una conversación para comenzar a chatear
+                        </div>
+                    </div>
+
+                    <div id="chatContent"
+                        style="display: none; height: 100%; flex-direction: column;">
+                        <div class="chat-header" id="chatHeader">
+                            <!-- Header del chat se cargará aquí -->
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Mensajes se cargarán aquí -->
+                        </div>
+                        <div class="quick-replies" id="quickReplies"
+                            style="display: none;">
+                            <!-- Botones de respuesta rápida se cargarán aquí -->
+                        </div>
+                        <div class="iphone_footer_content">
+                            <div class="iphone_footer_img">
+                                <img
+                                    src="https://prankshit.com/es/whatsapp/images/plus-whatsapp.png"
+                                    alt="Plus WhatsApp">
+                            </div>
+                            <div class="iphone_footer_text_input">
+                                <input type="text" class="chat-input"
+                                    placeholder="Escribe un mensaje">
+                                <div class="iphone_footer_whatsapp_recoder">
+                                    <img
+                                        src="https://prankshit.com/es/whatsapp/images/page-whatsapp.png"
+                                        alt="Recorder WhatsApp">
+                                </div>
+                            </div>
+                            <div class="iphone_footer_whatsapp_comment_bar">
+                                <img
+                                    src="https://prankshit.com/es/whatsapp/images/icone-whatsapp.png"
+                                    alt="Send WhatsApp">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </iphone-16-max>
+        </div>
+
+        <script>
+        class WhatsAppSchedulingSimulation {
+            constructor() {
+                this.messages = [];
+                this.currentStep = 0;
+                this.userInput = '';
+                this.appointmentData = {};
+                this.isWaitingForResponse = false;
+                
+                this.initializeSimulation();
+                this.setupEventListeners();
+            }
+
+            initializeSimulation() {
+                // Mostrar el chat inmediatamente
+                this.showChatInterface();
+                
+                // Comenzar la simulación
+                setTimeout(() => {
+                    this.startAppointmentFlow();
+                }, 1000);
+            }
+
+            setupEventListeners() {
+                const chatInput = document.querySelector('.chat-input');
+                const sendButton = document.querySelector('.iphone_footer_whatsapp_comment_bar img');
+                
+                // Enviar mensaje con Enter
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !this.isWaitingForResponse) {
+                        this.sendUserMessage(chatInput.value.trim());
+                        chatInput.value = '';
+                    }
+                });
+                
+                // Enviar mensaje con botón
+                sendButton.addEventListener('click', () => {
+                    if (!this.isWaitingForResponse) {
+                        this.sendUserMessage(chatInput.value.trim());
+                        chatInput.value = '';
+                    }
+                });
+            }
+
+            showQuickReplies(options) {
+                const quickRepliesContainer = document.getElementById('quickReplies');
+                
+                if (!options || options.length === 0) {
+                    quickRepliesContainer.style.display = 'none';
+                    return;
+                }
+
+                quickRepliesContainer.innerHTML = '';
+                quickRepliesContainer.style.display = 'flex';
+                
+                // Agregar clase horizontal para ciertas opciones
+                if (options.some(opt => opt.horizontal)) {
+                    quickRepliesContainer.className = 'quick-replies horizontal';
+                } else {
+                    quickRepliesContainer.className = 'quick-replies';
+                }
+
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = `quick-reply-button ${option.type || ''}`;
+                    button.textContent = option.text;
+                    button.onclick = () => this.handleQuickReply(option.value || option.text);
+                    quickRepliesContainer.appendChild(button);
+                });
+            }
+
+            hideQuickReplies() {
+                const quickRepliesContainer = document.getElementById('quickReplies');
+                quickRepliesContainer.style.display = 'none';
+            }
+
+            async handleQuickReply(value) {
+                this.hideQuickReplies();
+                await this.sendUserMessage(value);
+            }
+
+            showChatInterface() {
+                const chatPlaceholder = document.getElementById('chatPlaceholder');
+                const chatContent = document.getElementById('chatContent');
+                const chatHeader = document.getElementById('chatHeader');
+                
+                chatPlaceholder.style.display = 'none';
+                chatContent.style.display = 'flex';
+
+                // Header del chat
+                chatHeader.innerHTML = `
+                    <button class="header-back-btn" title="Volver"></button>
+                    <div class="chat-contact-avatar"></div>
+                    <div class="chat-contact-info">
+                        <div class="chat-contact-name">
+                            <span class="chat-contact-name-text">Deutsche Glasfaser</span>
+                            <div class="verified-badge"></div>
+                        </div>
+                        <div class="chat-status">En línea</div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="call-video-icons" title="Llamada y Videollamada"></button>
+                        <button class="chat-btn menu-icon" title="Más opciones"></button>
+                    </div>
+                `;
+            }
+
+            addMessage(content, direction, delay = 0) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const timestamp = new Date();
+                        const message = {
+                            body: content,
+                            direction: direction,
+                            timestamp: timestamp.toISOString()
+                        };
+                        
+                        this.messages.push(message);
+                        this.renderMessages();
+                        resolve();
+                    }, delay);
+                });
+            }
+
+            renderMessages() {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                chatMessages.innerHTML = this.messages.map(msg => `
+                    <div class="message ${msg.direction}">
+                        <div class="message-bubble">
+                            <div class="message-content">${msg.body}</div>
+                            <div class="message-info">
+                                <span class="message-timestamp">${this.formatMessageTime(msg.timestamp)}</span>
+                                ${msg.direction === 'sent' ? '<span class="message-status-icon"></span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Auto scroll
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 50);
+            }
+
+            formatMessageTime(timestamp) {
+                const date = new Date(timestamp);
+                return date.toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            async startAppointmentFlow() {
+                // Simular datos del cliente como en el bot real
+                this.appointmentData = {
+                    name: "Alejandro Herrera",
+                    phone: "+49 151 1947 0267",
+                    address: "Musterstraße 15, 10115 Berlin",
+                    contractNumber: "DG-2024-89756"
+                };
+
+                // Mensaje combinado para reducir costos de API
+                const welcomeMessage = `🏠 Hallo Alejandro Herrera!
+
+📡 Deutsche Glasfaser kontaktiert Sie, weil Sie einen ausstehenden *Installations- und Aktivierungsprozess* für Ihren Glasfaser-Internetdienst haben.
+
+🔧 Um den Technikerbesuch zu koordinieren, benötigen wir einige Daten.
+
+🌐 Bitte wählen Sie Ihre bevorzugte Sprache:`;
+
+                await this.addMessage(welcomeMessage, 'received', 500);
+                
+                // Mostrar botones de selección de idioma con alemán primero y español al final
+                setTimeout(() => {
+                    this.showQuickReplies([
+                        { text: "🇩🇪 Deutsch" },
+                        { text: "🇺🇸 English" },
+                        { text: "🇪🇸 Español" }
+                    ]);
+                }, 1500);
+                
+                this.currentStep = 1; // Selección de idioma
+                this.isWaitingForResponse = false;
+            }
+
+            async sendUserMessage(message) {
+                if (!message || this.isWaitingForResponse) return;
+                
+                this.isWaitingForResponse = true;
+                await this.addMessage(message, 'sent');
+                
+                // Procesar respuesta según el paso actual
+                await this.processUserResponse(message);
+            }
+
+            async processUserResponse(message) {
+                switch (this.currentStep) {
+                    case 1: // Selección de idioma
+                        let selectedLanguage = 'de'; // Por defecto alemán
+                        
+                        if (message === "🇩🇪 Deutsch") {
+                            selectedLanguage = 'de';
+                            const germanMessage = `📡 Hallo!
+Ihr Glasfaser-Internetdienst ist bereit für die Installation.
+
+🛠 Um den Technikerbesuch zu planen:`;
+                            
+                            await this.addMessage(germanMessage, 'received', 1000);
+                            
+                            setTimeout(() => {
+                                this.showQuickReplies([
+                                    { text: "TERMIN vereinbaren 📅" }
+                                ]);
+                            }, 1500);
+                        } else if (message === "🇺🇸 English") {
+                            selectedLanguage = 'en';
+                            const englishMessage = `📡 Hello!
+Your fiber optic Internet service is ready to be installed.
+
+🛠 To schedule the technician's visit:`;
+                            
+                            await this.addMessage(englishMessage, 'received', 1000);
+                            
+                            setTimeout(() => {
+                                this.showQuickReplies([
+                                    { text: "SCHEDULE my appointment 📅" }
+                                ]);
+                            }, 1500);
+                        } else if (message === "🇪🇸 Español") {
+                            selectedLanguage = 'es';
+                            const spanishMessage = `📡 ¡Hola!
+Tu servicio de Internet por fibra óptica está listo para ser instalado.
+
+🛠 Para agendar la visita del técnico:`;
+                            
+                            await this.addMessage(spanishMessage, 'received', 1000);
+                            
+                            setTimeout(() => {
+                                this.showQuickReplies([
+                                    { text: "AGENDAR mi cita 📅" }
+                                ]);
+                            }, 1500);
+                        }
+                        
+                        this.selectedLanguage = selectedLanguage;
+                        this.currentStep = 2; // Confirmar agendamiento
+                        break;
+                        
+                    case 2: // Confirmar agendamiento
+                        if (message.includes("AGENDAR") || message.includes("SCHEDULE") || message.includes("TERMIN")) {
+                            // Mensajes combinados de agendamiento según idioma
+                            let scheduleMessage = '';
+                            let buttons = [];
+                            
+                            if (this.selectedLanguage === 'es') {
+                                scheduleMessage = "📅 Vamos a programar tu cita de instalación.";
+                                buttons = [
+                                    { text: "Ver horarios disponibles 🗓️" },
+                                    { text: "Cancelar proceso ❌" }
+                                ];
+                            } else if (this.selectedLanguage === 'en') {
+                                scheduleMessage = "📅 Let's schedule your installation appointment.";
+                                buttons = [
+                                    { text: "See available times 🗓️" },
+                                    { text: "Cancel process ❌" }
+                                ];
+                            } else { // Deutsch
+                                scheduleMessage = "📅 Lassen Sie uns Ihren Installationstermin planen.";
+                                buttons = [
+                                    { text: "Verfügbare Zeiten anzeigen 🗓️" },
+                                    { text: "Vorgang abbrechen ❌" }
+                                ];
+                            }
+                            
+                            await this.addMessage(scheduleMessage, 'received', 1000);
+                            setTimeout(() => {
+                                this.showQuickReplies(buttons);
+                            }, 1500);
+                            
+                            this.currentStep = 3; // Ver horarios
+                        }
+                        break;
+                        
+                    case 3: // Ver horarios disponibles
+                        if (message.includes("Ver horarios") || message.includes("See available") || message.includes("Verfügbare Zeiten")) {
+                            await this.showAvailableSlots();
+                        } else if (message.includes("Cancelar") || message.includes("Cancel") || message.includes("abbrechen")) {
+                            await this.cancelProcess();
+                        }
+                        break;
+                        
+                    case 4: // Seleccionar horario específico
+                        if (message.includes("Ver otros horarios") || message.includes("Weitere Termine") || message.includes("See more times")) {
+                            await this.showMoreSlots();
+                        } else {
+                            // Extraer el texto del horario seleccionado
+                            const selectedSlot = this.findSlotByMessage(message);
+                            if (selectedSlot) {
+                                await this.confirmSelectedSlot(selectedSlot);
+                            } else {
+                                // Si no encuentra el slot, volver a mostrar opciones
+                                await this.showAvailableSlots();
+                            }
+                        }
+                        break;
+
+                    case 4.5: // Horarios adicionales
+                        if (message.includes("Volver a anteriores") || message.includes("Zurück zu vorherigen") || message.includes("Back to previous")) {
+                            await this.showAvailableSlots();
+                        } else {
+                            // Buscar en todos los slots disponibles para horarios adicionales
+                            const selectedSlot = this.findSlotInAll(message);
+                            if (selectedSlot) {
+                                await this.confirmSelectedSlot(selectedSlot);
+                            } else {
+                                await this.showMoreSlots();
+                            }
+                        }
+                        break;
+                        
+                    case 5: // Confirmación del horario
+                        if (message.includes("bestätige") || message.includes("confirmo") || message.includes("confirm")) {
+                            await this.askForReminder();
+                        } else if (message.includes("otro horario") || message.includes("another time") || message.includes("andere Zeit")) {
+                            await this.showAvailableSlots();
+                        } else if (message.includes("Cancelar") || message.includes("Cancel") || message.includes("abbrechen")) {
+                            await this.cancelProcess();
+                        }
+                        break;
+                        
+                    case 6: // Recordatorio
+                        if (message.includes("recordarme") || message.includes("remind me") || message.includes("erinnern")) {
+                            this.appointmentData.reminder = true;
+                            await this.finalizeAppointment(true);
+                        } else {
+                            this.appointmentData.reminder = false;
+                            await this.finalizeAppointment(false);
+                        }
+                        break;
+                        
+                    default:
+                        await this.addMessage("Gracias por contactarnos. ¿Hay algo más en lo que pueda ayudarte?", 'received', 1000);
+                        break;
+                }
+                
+                this.isWaitingForResponse = false;
+            }
+
+            // Encontrar slot por texto del mensaje (primeros 2)
+            findSlotByMessage(message) {
+                // Buscar en los primeros 2 slots disponibles
+                for (let i = 0; i < 2 && i < this.availableSlots.length; i++) {
+                    const slot = this.availableSlots[i];
+                    if (message.includes(slot.date) && message.includes(slot.time)) {
+                        return slot;
+                    }
+                }
+                return null;
+            }
+
+            // Encontrar slot en todos los disponibles
+            findSlotInAll(message) {
+                // Buscar en todos los slots disponibles
+                for (let i = 0; i < this.availableSlots.length; i++) {
+                    const slot = this.availableSlots[i];
+                    if (message.includes(slot.date) && message.includes(slot.time)) {
+                        return slot;
+                    }
+                }
+                return null;
+            }
+
+            // Mostrar horarios adicionales (slots 3 y 4)
+            async showMoreSlots() {
+                const lang = this.selectedLanguage || 'de';
+                
+                let headerText, bodyText;
+                
+                if (lang === 'de') {
+                    headerText = '⏰ Weitere Termine';
+                    bodyText = 'Hier sind weitere verfügbare Zeiten:';
+                } else if (lang === 'es') {
+                    headerText = '⏰ Más Horarios';
+                    bodyText = 'Aquí tienes más horarios disponibles:';
+                } else {
+                    headerText = '⏰ More Times';
+                    bodyText = 'Here are more available times:';
+                }
+                
+                await this.addMessage(bodyText, 'received', 1000);
+                
+                setTimeout(() => {
+                    // Mostrar slots 3 y 4 + opción de volver
+                    let backText;
+                    if (lang === 'de') {
+                        backText = "⬅️ Zurück zu vorherigen";
+                    } else if (lang === 'es') {
+                        backText = "⬅️ Volver a anteriores";
+                    } else {
+                        backText = "⬅️ Back to previous";
+                    }
+                    
+                    const moreOptions = [
+                        { text: `📆 ${this.availableSlots[2].date} - 🕐 ${this.availableSlots[2].time}` },
+                        { text: `📆 ${this.availableSlots[3].date} - 🕐 ${this.availableSlots[3].time}` },
+                        { text: backText }
+                    ];
+                    this.showQuickReplies(moreOptions);
+                }, 1500);
+                
+                this.currentStep = 4.5; // Sub-estado para horarios adicionales
+            }
+
+            // Generar horarios disponibles como en el bot real
+            generateAvailableSlots() {
+                const today = new Date();
+                const slots = [];
+                
+                // Generar fechas futuras
+                for (let i = 1; i <= 4; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    
+                    const dayNames = {
+                        'es': ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                        'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                        'de': ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+                    };
+                    
+                    const monthNames = {
+                        'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+                        'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        'de': ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+                    };
+                    
+                    const lang = this.selectedLanguage || 'de';
+                    const dayName = dayNames[lang][date.getDay()];
+                    const monthName = monthNames[lang][date.getMonth()];
+                    
+                    let dateStr;
+                    if (lang === 'de') {
+                        dateStr = `${dayName}, ${date.getDate()}. ${monthName}`;
+                    } else if (lang === 'en') {
+                        dateStr = `${dayName} ${monthName} ${date.getDate()}`;
+                    } else {
+                        dateStr = `${dayName} ${date.getDate()} de ${monthName}`;
+                    }
+                    
+                    if (i <= 2) {
+                        slots.push({
+                            id: slots.length + 1,
+                            date: dateStr,
+                            time: '09:00 – 11:00',
+                            fullDate: date
+                        });
+                        slots.push({
+                            id: slots.length + 1,
+                            date: dateStr,
+                            time: '13:00 – 15:00',
+                            fullDate: date
+                        });
+                    }
+                }
+                
+                return slots.slice(0, 4);
+            }
+
+            async showAvailableSlots() {
+                this.availableSlots = this.generateAvailableSlots();
+                const lang = this.selectedLanguage || 'de';
+                
+                let headerText, bodyText;
+                
+                if (lang === 'es') {
+                    headerText = '📅 Horarios Disponibles';
+                    bodyText = '⏰ Selecciona el horario que mejor te convenga para la instalación:';
+                } else if (lang === 'en') {
+                    headerText = '📅 Available Times';
+                    bodyText = '⏰ Select the time that works best for your installation:';
+                } else {
+                    headerText = '📅 Verfügbare Zeiten';
+                    bodyText = '⏰ Wählen Sie die Zeit, die für Ihre Installation am besten geeignet ist:';
+                }
+                
+                await this.addMessage(bodyText, 'received', 1000);
+                
+                setTimeout(() => {
+                    // Mostrar solo 2 horarios + opción "Ver otros" (máximo 3 botones)
+                    let moreTimesText;
+                    if (lang === 'de') {
+                        moreTimesText = "Weitere Termine ⏰";
+                    } else if (lang === 'es') {
+                        moreTimesText = "Ver otros horarios ⏰";
+                    } else {
+                        moreTimesText = "See more times ⏰";
+                    }
+                    
+                    const options = [
+                        { text: `📆 ${this.availableSlots[0].date} - 🕐 ${this.availableSlots[0].time}` },
+                        { text: `📆 ${this.availableSlots[1].date} - 🕐 ${this.availableSlots[1].time}` },
+                        { text: moreTimesText }
+                    ];
+                    this.showQuickReplies(options);
+                }, 1500);
+                
+                this.currentStep = 4; // Seleccionar horario
+            }
+
+            async confirmSelectedSlot(selectedSlot) {
+                const lang = this.selectedLanguage || 'de';
+                const slotText = `${selectedSlot.date}, ${selectedSlot.time}`;
+                
+                let confirmText, buttons;
+                
+                if (lang === 'es') {
+                    confirmText = `✅ Has seleccionado:\n📅 **${slotText}**\n\n¿Confirmas esta cita de instalación?`;
+                    buttons = [
+                        { text: "Sí, confirmo ✅", type: "confirm" },
+                        { text: "No, otro horario 🔄" },
+                        { text: "Cancelar todo ❌", type: "cancel" }
+                    ];
+                } else if (lang === 'en') {
+                    confirmText = `✅ You have selected:\n📅 **${slotText}**\n\nDo you confirm this installation appointment?`;
+                    buttons = [
+                        { text: "Yes, I confirm ✅", type: "confirm" },
+                        { text: "No, another time 🔄" },
+                        { text: "Cancel all ❌", type: "cancel" }
+                    ];
+                } else {
+                    confirmText = `✅ Sie haben ausgewählt:\n📅 **${slotText}**\n\nBestätigen Sie diesen Installationstermin?`;
+                    buttons = [
+                        { text: "Ja, ich bestätige ✅", type: "confirm" },
+                        { text: "Nein, andere Zeit 🔄" },
+                        { text: "Alles abbrechen ❌", type: "cancel" }
+                    ];
+                }
+                
+                this.appointmentData.selectedSlot = selectedSlot;
+                await this.addMessage(confirmText, 'received', 1000);
+                
+                setTimeout(() => {
+                    this.showQuickReplies(buttons);
+                }, 1500);
+                
+                this.currentStep = 5; // Confirmación
+            }
+
+            async askForReminder() {
+                const lang = this.selectedLanguage || 'de'; // Alemán por defecto
+                const slotText = `${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}`;
+                
+                let reminderText, buttons;
+                
+                if (lang === 'de') {
+                    reminderText = `🎉 Ausgezeichnet!
+
+Ihr Termin ist bestätigt für:
+📅 **${slotText}**
+
+Möchten Sie einen Tag vorher eine Erinnerung erhalten?`;
+                    buttons = [
+                        { text: "Ja, erinnern Sie mich 🔔" },
+                        { text: "Nein, danke 🚫" }
+                    ];
+                } else if (lang === 'es') {
+                    reminderText = `🎉 ¡Excelente!
+
+Tu cita está confirmada para:
+📅 **${slotText}**
+
+¿Deseas recibir un recordatorio un día antes?`;
+                    buttons = [
+                        { text: "Sí, recordarme 🔔" },
+                        { text: "No, gracias 🚫" }
+                    ];
+                } else { // English
+                    reminderText = `🎉 Excellent!
+
+Your appointment is confirmed for:
+📅 **${slotText}**
+
+Would you like to receive a reminder one day before?`;
+                    buttons = [
+                        { text: "Yes, remind me 🔔" },
+                        { text: "No, thanks 🚫" }
+                    ];
+                }
+                
+                await this.addMessage(reminderText, 'received', 1000);
+                
+                setTimeout(() => {
+                    this.showQuickReplies(buttons);
+                }, 1500);
+                
+                this.currentStep = 6; // Recordatorio
+            }
+
+            async finalizeAppointment(withReminder) {
+                const lang = this.selectedLanguage || 'de'; // Alemán por defecto
+                const slotText = `${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}`;
+                
+                // Mensaje único y completo para reducir costos de API
+                let finalText;
+                if (lang === 'de') {
+                    const reminderText = withReminder 
+                        ? '📲 Wir senden Ihnen einen Tag vorher eine Erinnerung über WhatsApp.'
+                        : '👍 Verstanden, wir senden keine Erinnerung.';
+                    
+                    finalText = `🎉 **Ihr Termin ist bestätigt!**
+
+📅 **Datum und Uhrzeit:** ${slotText}
+🏠 **Service:** Glasfaser-Installation
+🔧 **Unternehmen:** Deutsche Glasfaser
+
+${reminderText}
+
+✅ Der Techniker wird zur vereinbarten Zeit ankommen, um die komplette Installation durchzuführen.
+
+Vielen Dank, dass Sie sich für unsere Glasfaserdienste entschieden haben! 🚀`;
+                } else if (lang === 'es') {
+                    const reminderText = withReminder 
+                        ? '📲 Te enviaremos un recordatorio un día antes por WhatsApp.'
+                        : '👍 Entendido, no enviaremos recordatorio.';
+                    
+                    finalText = `🎉 **¡Tu cita está confirmada!**
+
+📅 **Fecha y hora:** ${slotText}
+🏠 **Servicio:** Instalación de fibra óptica
+🔧 **Empresa:** Deutsche Glasfaser
+
+${reminderText}
+
+✅ El técnico llegará en el horario acordado para realizar la instalación completa.
+
+¡Gracias por elegir nuestros servicios de fibra óptica! 🚀`;
+                } else { // English
+                    const reminderText = withReminder 
+                        ? '📲 We will send you a reminder one day before via WhatsApp.'
+                        : '👍 Understood, we won\'t send a reminder.';
+                    
+                    finalText = `🎉 **Your appointment is confirmed!**
+
+📅 **Date and time:** ${slotText}
+🏠 **Service:** Fiber optic installation
+🔧 **Company:** Deutsche Glasfaser
+
+${reminderText}
+
+✅ The technician will arrive at the agreed time to perform the complete installation.
+
+Thank you for choosing our fiber optic services! 🚀`;
+                }
+                
+                await this.addMessage(finalText, 'received', 1000);
+                this.currentStep = 7; // Finalizado
+            }
+
+            async cancelProcess() {
+                const lang = this.selectedLanguage || 'de';
+                
+                let cancelText;
+                if (lang === 'es') {
+                    cancelText = '❌ Proceso cancelado.\nSi cambias de opinión, escribe:\n1️⃣ Agendar';
+                } else if (lang === 'en') {
+                    cancelText = '❌ Process cancelled.\nIf you change your mind, write:\n1️⃣ Schedule';
+                } else {
+                    cancelText = '❌ Vorgang abgebrochen.\nWenn Sie es sich anders überlegen, schreiben Sie:\n1️⃣ Terminvereinbarung';
+                }
+                
+                await this.addMessage(cancelText, 'received', 1000);
+                this.currentStep = 0; // Reiniciar
+            }
+
+
+        }
+
+        // Inicializar la simulación cuando cargue la página
+        document.addEventListener('DOMContentLoaded', () => {
+            window.schedulingApp = new WhatsAppSchedulingSimulation();
+        });
+        </script>
+    </body>
+</html>

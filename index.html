@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bot de WhatsApp - Deutsche Glasfaser Demo</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #128c7e;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .feature {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .feature-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">🤖💬</div>
+            <h1>Bot de WhatsApp<br />Deutsche Glasfaser</h1>
+            <p>Simulador interactivo para agendación de citas de instalación de
+                fibra óptica con soporte multiidioma.</p>
+
+            <div class="buttons">
+                <a href="public/conversations.html" class="btn btn-primary">
+                    📱 Probar Simulador
+                </a>
+                <a href="https://github.com/EsneiderCode/botcitas-demo"
+                    class="btn btn-secondary" target="_blank">
+                    📂 Ver Código
+                </a>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🌍</span>
+                    <span>Soporte para Alemán, Inglés y Español</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📅</span>
+                    <span>Sistema completo de agendación de citas</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <span>Interfaz idéntica a WhatsApp Business</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🎯</span>
+                    <span>Optimizado para WhatsApp Business API</span>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Auto-redirect después de 5 segundos si no hay interacción
+        let redirectTimer = setTimeout(() => {
+            window.location.href = 'public/conversations.html';
+        }, 8000);
+        
+        // Cancelar auto-redirect si hay interacción
+        document.addEventListener('click', () => {
+            clearTimeout(redirectTimer);
+        });
+        
+        document.addEventListener('keypress', () => {
+            clearTimeout(redirectTimer);
+        });
+    </script>
+    </body>
+</html>

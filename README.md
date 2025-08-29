@@ -15,7 +15,11 @@ Bot automatizado de WhatsApp Business para agendación de citas de instalación 
 
 ## 🚀 Demo en Vivo
 
-Puedes probar la simulación del bot en: `http://localhost:3000/conversations.html`
+🔗 **Demo Principal**: [https://esneidercode.github.io/botcitas-demo/](https://esneidercode.github.io/botcitas-demo/)
+
+📱 **Simulador Directo**: [https://esneidercode.github.io/botcitas-demo/conversations.html](https://esneidercode.github.io/botcitas-demo/conversations.html)
+
+💻 **Desarrollo Local**: `http://localhost:3000/conversations.html`
 
 ## 🛠️ Tecnologías Utilizadas
 
