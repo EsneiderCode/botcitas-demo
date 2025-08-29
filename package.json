@@ -1,0 +1,43 @@
+{
+  "name": "whatsapp-appointment-bot",
+  "version": "1.0.0",
+  "description": "Sistema automatizado para agendar citas por WhatsApp usando botones interactivos",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "demo": "node index.js --demo",
+    "enhanced": "node index.js --enhanced",
+    "test-demo": "node test-demo.js",
+    "fix-excel": "node scripts/fix-excel.js",
+    "kill-excel": "taskkill /F /IM EXCEL.EXE 2>nul || echo 'Excel no estaba ejecutándose'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "googleapis": "^126.0.1",
+    "moment": "^2.29.4",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^2.7.0",
+    "qrcode-terminal": "^0.12.0",
+    "socket.io": "^4.8.1",
+    "whatsapp-web.js": "^1.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "appointments",
+    "google-sheets",
+    "excel",
+    "demo",
+    "ai",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Demo - Chatbot Inteligente Deutsche Glasfaser</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100vh;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .chat-panel .panel-header {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .system-panel .panel-header {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Chat Simulation */
+        .chat-messages {
+            height: 400px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .message.bot {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user {
+            background: #c8e6c9;
+            color: #2e7d32;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.system {
+            background: #fff3e0;
+            color: #f57c00;
+            font-style: italic;
+            text-align: center;
+            margin: 10px auto;
+            max-width: 90%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* System Panel */
+        .system-status {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .status-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .technicians-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .technician-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .technician-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .technician-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .workload-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .workload-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #FFC107, #F44336);
+            transition: width 0.3s ease;
+        }
+
+        /* Query Simulation */
+        .query-simulation {
+            background: #f0f4f8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .query-status {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1976D2;
+        }
+
+        .query-steps {
+            list-style: none;
+        }
+
+        .query-step {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .query-step::before {
+            content: "⏳";
+            position: absolute;
+            left: 0;
+        }
+
+        .query-step.completed::before {
+            content: "✅";
+        }
+
+        .query-step.active::before {
+            content: "🔄";
+        }
+
+        /* Demo Controls */
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .demo-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-btn.primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .demo-btn.secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Statistics */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .chat-messages {
+                height: 300px;
+            }
+        }
+    </style>
+    </head>
+    <body>
+        <div class="demo-container">
+            <!-- Panel de Chat -->
+            <div class="panel chat-panel">
+                <div class="panel-header">
+                    🤖 Simulación de Conversación
+                </div>
+                <div class="panel-content">
+                    <div class="demo-controls">
+                        <button class="demo-btn primary"
+                            onclick="startDemo()">🚀 Iniciar Demo</button>
+                        <button class="demo-btn secondary"
+                            onclick="resetDemo()">🔄 Reiniciar</button>
+                        <button class="demo-btn secondary"
+                            onclick="togglePause()">⏸️ Pausar</button>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system">
+                            Demo listo para comenzar. Haz clic en "Iniciar Demo"
+                            para ver la simulación completa.
+                        </div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number" id="messageCount">0</div>
+                            <div class="stat-label">Mensajes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="responseTime">0</div>
+                            <div class="stat-label">Tiempo (s)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="satisfaction">98%</div>
+                            <div class="stat-label">Satisfacción</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel del Sistema -->
+            <div class="panel system-panel">
+                <div class="panel-header">
+                    🔧 Sistema Interno - Vista en Tiempo Real
+                </div>
+                <div class="panel-content">
+                    <div class="system-status">
+                        <div class="status-card">
+                            <div class="status-value"
+                                id="availabilityRate">87.5%</div>
+                            <div class="status-label">Disponibilidad</div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-value" id="avgWorkload">68%</div>
+                            <div class="status-label">Carga Promedio</div>
+                        </div>
+                    </div>
+
+                    <h3>👨‍🔧 Técnicos Disponibles</h3>
+                    <div class="technicians-grid" id="techniciansGrid">
+                        <!-- Se llenarán dinámicamente -->
+                    </div>
+
+                    <h3>🔍 Consulta del Sistema</h3>
+                    <div class="query-simulation" id="querySimulation">
+                        <div class="query-status">Sistema en espera...</div>
+                        <ul class="query-steps" id="querySteps">
+                            <li class="query-step">Conectando a base de
+                                datos</li>
+                            <li class="query-step">Verificando disponibilidad
+                                por zona</li>
+                            <li class="query-step">Analizando cargas de
+                                trabajo</li>
+                            <li class="query-step">Calculando eficiencia de
+                                técnicos</li>
+                            <li class="query-step">Optimizando horarios</li>
+                            <li class="query-step">Generando
+                                recomendaciones</li>
+                        </ul>
+                    </div>
+
+                    <h3>📊 Métricas del Sistema</h3>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalQueries">0</div>
+                            <div class="stat-label">Consultas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number"
+                                id="avgQueryTime">0.8s</div>
+                            <div class="stat-label">Tiempo Medio</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="successRate">100%</div>
+                            <div class="stat-label">Éxito</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Variables globales
+        let socket;
+        let demoRunning = false;
+        let demoPaused = false;
+        let messageCount = 0;
+        let demoStartTime;
+        let currentStep = 0;
+
+        // Datos simulados
+        const technicians = [
+            { id: 'TEC001', name: 'Klaus Mueller', zone: 'Norte', workload: 70, efficiency: 92 },
+            { id: 'TEC002', name: 'Maria Rodriguez', zone: 'Centro', workload: 80, efficiency: 95 },
+            { id: 'TEC003', name: 'Stefan Weber', zone: 'Sur', workload: 60, efficiency: 88 },
+            { id: 'TEC004', name: 'Ana Garcia', zone: 'Este', workload: 50, efficiency: 90 }
+        ];
+
+        const demoConversation = [
+            {
+                type: 'bot',
+                message: '🏠 ¡Hola! Soy el asistente virtual de Deutsche Glasfaser 🤖\n\nMe comunico contigo porque tienes pendiente la instalación de tu servicio de fibra óptica y quiero ayudarte a coordinar la visita del técnico.\n\n🌐 Para brindarte la mejor atención, ¿podrías seleccionar tu idioma preferido?\n\n1️⃣ Español 🇪🇸\n2️⃣ English 🇺🇸\n3️⃣ Deutsch 🇩🇪',
+                delay: 1000
+            },
+            {
+                type: 'user',
+                message: '1',
+                delay: 2000
+            },
+            {
+                type: 'system',
+                message: 'Consultando sistema interno...',
+                delay: 500,
+                action: 'startQuery'
+            },
+            {
+                type: 'bot',
+                message: '✅ ¡Perfecto! He encontrado disponibilidad\n\n📊 Consulté nuestro sistema y tengo excelentes opciones para ti:\n🔧 4 técnicos especializados disponibles\n📅 6 horarios convenientes encontrados\n\n¿Te gustaría que te muestre las mejores opciones?\n\n1️⃣ Sí, muéstrame los horarios\n2️⃣ Necesito reagendar más adelante',
+                delay: 3000,
+                action: 'showAvailability'
+            },
+            {
+                type: 'user',
+                message: '1',
+                delay: 1500
+            },
+            {
+                type: 'bot',
+                message: '📅 Estos son los mejores horarios disponibles:\n\n1️⃣ **Miércoles 15 de enero**\n   🕐 09:00 – 11:00\n   👨‍🔧 Klaus Mueller (92% eficiencia)\n   📍 Zona Norte\n\n2️⃣ **Miércoles 15 de enero**\n   🕐 13:00 – 15:00\n   👨‍🔧 Maria Rodriguez (95% eficiencia)\n   📍 Zona Centro\n\n3️⃣ **Jueves 16 de enero**\n   🕐 10:00 – 12:00\n   👨‍🔧 Stefan Weber (88% eficiencia)\n   📍 Zona Sur\n\n💡 Recomendación del sistema: Los horarios de mañana suelen tener mejor puntualidad\n\n¿Cuál prefieres? Solo escribe el número 👆',
+                delay: 2000
+            },
+            {
+                type: 'user',
+                message: '2',
+                delay: 2500
+            },
+            {
+                type: 'system',
+                message: 'Reservando horario temporalmente...',
+                delay: 500,
+                action: 'reserveSlot'
+            },
+            {
+                type: 'bot',
+                message: '✅ ¡Excelente elección!\n\nHe reservado temporalmente:\n🗓️ **Miércoles 15 de enero, 13:00 – 15:00**\n👨‍🔧 **Técnico:** Maria Rodriguez\n📍 **Zona:** Centro\n⚡ **Eficiencia:** 95%\n\n⏰ Esta reserva expira en 10 minutos\n\n¿Confirmas esta cita de instalación?\n\n1️⃣ Sí, confirmo la cita\n2️⃣ Quiero ver otras opciones\n3️⃣ Necesito reagendar',
+                delay: 2000
+            },
+            {
+                type: 'user',
+                message: '1',
+                delay: 1500
+            },
+            {
+                type: 'bot',
+                message: '🎉 ¡Cita confirmada exitosamente!\n\n📋 **CONFIRMACIÓN:** DG7X9K2M\n🗓️ **Fecha y hora:** Miércoles 15 de enero, 13:00 – 15:00\n👨‍🔧 **Técnico asignado:** Maria Rodriguez\n📍 **Zona de servicio:** Centro\n\n📲 **Próximos pasos:**\n• Te enviaré un recordatorio 24h antes\n• El técnico llegará en el horario acordado\n• La instalación completa toma aprox. 2-3 horas\n• Asegúrate de estar disponible\n\n✨ **¡Listo! Tu fibra óptica estará funcionando pronto**\n\n¿Hay algo más en lo que pueda ayudarte?',
+                delay: 2000,
+                action: 'finalizeAppointment'
+            },
+            {
+                type: 'bot',
+                message: '🔔 Sistema de recordatorios activado\n📱 Te escribiré por WhatsApp 24 horas antes de tu cita\n\n🤖 Soy tu asistente virtual 24/7. Si necesitas reagendar o tienes dudas, simplemente escríbeme.\n\n¡Que tengas un excelente día! 🌟',
+                delay: 1500
+            }
+        ];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSocket();
+            renderTechnicians();
+            updateSystemStats();
+        });
+
+        function initializeSocket() {
+            socket = io();
+            
+            socket.on('connect', () => {
+                console.log('Conectado al servidor');
+            });
+
+            socket.on('appointmentsUpdate', (data) => {
+                updateRealTimeData(data);
+            });
+        }
+
+        function renderTechnicians() {
+            const grid = document.getElementById('techniciansGrid');
+            grid.innerHTML = '';
+
+            technicians.forEach(tech => {
+                const card = document.createElement('div');
+                card.className = 'technician-card';
+                card.innerHTML = `
+                    <div class="technician-name">${tech.name}</div>
+                    <div class="technician-info">
+                        📍 ${tech.zone} | ⚡ ${tech.efficiency}%
+                    </div>
+                    <div class="workload-bar">
+                        <div class="workload-fill" style="width: ${tech.workload}%"></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function startDemo() {
+            if (demoRunning) return;
+            
+            demoRunning = true;
+            demoPaused = false;
+            messageCount = 0;
+            currentStep = 0;
+            demoStartTime = Date.now();
+            
+            document.getElementById('chatMessages').innerHTML = '';
+            updateCounter();
+            
+            executeNextStep();
+        }
+
+        function executeNextStep() {
+            if (!demoRunning || demoPaused || currentStep >= demoConversation.length) {
+                if (currentStep >= demoConversation.length) {
+                    demoRunning = false;
+                    addSystemMessage('Demo completada. ¡Excelente simulación!');
+                }
+                return;
+            }
+
+            const step = demoConversation[currentStep];
+            
+            setTimeout(() => {
+                if (step.action) {
+                    executeAction(step.action);
+                }
+                
+                if (step.message) {
+                    addMessage(step.type, step.message);
+                    messageCount++;
+                    updateCounter();
+                }
+                
+                currentStep++;
+                executeNextStep();
+            }, step.delay);
+        }
+
+        function executeAction(action) {
+            switch (action) {
+                case 'startQuery':
+                    simulateSystemQuery();
+                    break;
+                case 'showAvailability':
+                    updateAvailabilityStats();
+                    break;
+                case 'reserveSlot':
+                    reserveSlotAnimation();
+                    break;
+                case 'finalizeAppointment':
+                    finalizeAnimation();
+                    break;
+            }
+        }
+
+        function simulateSystemQuery() {
+            const steps = document.querySelectorAll('.query-step');
+            const status = document.querySelector('.query-status');
+            
+            status.innerHTML = '🔍 Consultando sistema... <span class="loading"></span>';
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    steps.forEach(s => s.classList.remove('active'));
+                    step.classList.add('active');
+                    
+                    setTimeout(() => {
+                        step.classList.remove('active');
+                        step.classList.add('completed');
+                        
+                        if (index === steps.length - 1) {
+                            status.innerHTML = '✅ Consulta completada exitosamente';
+                            document.getElementById('totalQueries').textContent = 
+                                parseInt(document.getElementById('totalQueries').textContent) + 1;
+                        }
+                    }, 300);
+                }, index * 400);
+            });
+        }
+
+        function updateAvailabilityStats() {
+            // Simular actualización de métricas
+            document.getElementById('availabilityRate').textContent = '92.3%';
+            document.getElementById('avgWorkload').textContent = '64%';
+            
+            // Animar workload de técnicos
+            technicians.forEach((tech, index) => {
+                setTimeout(() => {
+                    const newWorkload = Math.max(tech.workload - 5, 45);
+                    tech.workload = newWorkload;
+                    
+                    const fills = document.querySelectorAll('.workload-fill');
+                    if (fills[index]) {
+                        fills[index].style.width = newWorkload + '%';
+                    }
+                }, index * 200);
+            });
+        }
+
+        function reserveSlotAnimation() {
+            // Highlight del técnico seleccionado
+            const cards = document.querySelectorAll('.technician-card');
+            if (cards[1]) { // Maria Rodriguez
+                cards[1].style.backgroundColor = '#e8f5e8';
+                cards[1].style.border = '2px solid #4CAF50';
+                
+                setTimeout(() => {
+                    cards[1].style.backgroundColor = '';
+                    cards[1].style.border = '';
+                }, 3000);
+            }
+        }
+
+        function finalizeAnimation() {
+            // Actualizar estadísticas finales
+            document.getElementById('successRate').textContent = '100%';
+            document.getElementById('satisfaction').textContent = '99%';
+            
+            // Confetti effect (simulado)
+            addSystemMessage('🎉 Sistema actualizado: Nueva cita confirmada con éxito');
+        }
+
+        function addMessage(type, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = message.replace(/\n/g, '<br>');
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addSystemMessage(message) {
+            addMessage('system', message);
+        }
+
+        function updateCounter() {
+            document.getElementById('messageCount').textContent = messageCount;
+            
+            if (demoStartTime) {
+                const elapsed = (Date.now() - demoStartTime) / 1000;
+                document.getElementById('responseTime').textContent = elapsed.toFixed(1);
+            }
+        }
+
+        function resetDemo() {
+            demoRunning = false;
+            demoPaused = false;
+            currentStep = 0;
+            messageCount = 0;
+            
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message system">
+                    Demo reiniciada. Lista para comenzar nuevamente.
+                </div>
+            `;
+            
+            // Reset system status
+            const steps = document.querySelectorAll('.query-step');
+            steps.forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            document.querySelector('.query-status').textContent = 'Sistema en espera...';
+            
+            // Reset stats
+            document.getElementById('messageCount').textContent = '0';
+            document.getElementById('responseTime').textContent = '0';
+            document.getElementById('totalQueries').textContent = '0';
+            
+            renderTechnicians();
+        }
+
+        function togglePause() {
+            demoPaused = !demoPaused;
+            const btn = event.target;
+            btn.textContent = demoPaused ? '▶️ Continuar' : '⏸️ Pausar';
+            
+            if (!demoPaused && demoRunning) {
+                executeNextStep();
+            }
+        }
+
+        function updateSystemStats() {
+            // Actualizar estadísticas cada 5 segundos
+            setInterval(() => {
+                if (!demoRunning) {
+                    const currentAvailability = parseFloat(document.getElementById('availabilityRate').textContent);
+                    const newAvailability = Math.max(85, Math.min(95, currentAvailability + (Math.random() - 0.5) * 2));
+                    document.getElementById('availabilityRate').textContent = newAvailability.toFixed(1) + '%';
+                    
+                    const currentWorkload = parseFloat(document.getElementById('avgWorkload').textContent);
+                    const newWorkload = Math.max(60, Math.min(80, currentWorkload + (Math.random() - 0.5) * 3));
+                    document.getElementById('avgWorkload').textContent = Math.round(newWorkload) + '%';
+                }
+            }, 5000);
+        }
+
+        function updateRealTimeData(data) {
+            // Actualizar con datos reales del servidor si están disponibles
+            if (data.stats) {
+                // Actualizar estadísticas reales
+                console.log('Datos del servidor:', data);
+            }
+        }
+    </script>
+    </body>
+</html>
