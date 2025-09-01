@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot de Citas - Escenarios de Demostración</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .scenario-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .scenario-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .scenario-description {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .scenario-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .scenario-features li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .scenario-features li:before {
+            content: "✓ ";
+            color: #25D366;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .scenario-button {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .scenario-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
+        }
+
+        .footer p {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .scenario-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Bot de Citas Deutsche Glasfaser</h1>
+            <p>Explora los diferentes escenarios de conversación del bot de WhatsApp para agendación de citas de instalación de fibra óptica</p>
+        </div>
+
+        <div class="scenarios-grid">
+            <!-- Escenario 1: Agendamiento de Cita -->
+            <div class="scenario-card" onclick="window.open('conversations.html', '_blank')">
+                <div class="scenario-icon">📅</div>
+                <h3 class="scenario-title">1. Agendamiento de Cita</h3>
+                <p class="scenario-description">
+                    Flujo completo para agendar una nueva cita de instalación de fibra óptica.
+                </p>
+                <ul class="scenario-features">
+                    <li>Selección de idioma (Alemán, Inglés, Español)</li>
+                    <li>Elección de horarios disponibles</li>
+                    <li>Confirmación con datos del técnico</li>
+                    <li>Opción de recordatorio</li>
+                </ul>
+                <a href="conversations.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+            <!-- Escenario 2: Cancelación de Cita -->
+            <div class="scenario-card" onclick="window.open('scenario-cancellation.html', '_blank')">
+                <div class="scenario-icon">❌</div>
+                <h3 class="scenario-title">2. Cancelación de Cita</h3>
+                <p class="scenario-description">
+                    Proceso para cancelar una cita existente de manera rápida y eficiente.
+                </p>
+                <ul class="scenario-features">
+                    <li>Verificación de datos del cliente</li>
+                    <li>Confirmación de cancelación</li>
+                    <li>Liberación automática del horario</li>
+                    <li>Notificación de cancelación exitosa</li>
+                </ul>
+                <a href="scenario-cancellation.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+            <!-- Escenario 3: Modificación de Horario -->
+            <div class="scenario-card" onclick="window.open('scenario-modification.html', '_blank')">
+                <div class="scenario-icon">🔄</div>
+                <h3 class="scenario-title">3. Modificación de Horario</h3>
+                <p class="scenario-description">
+                    Cambio de horario de una cita existente por uno nuevo disponible.
+                </p>
+                <ul class="scenario-features">
+                    <li>Consulta de cita actual</li>
+                    <li>Nuevos horarios disponibles</li>
+                    <li>Confirmación del cambio</li>
+                    <li>Actualización automática del sistema</li>
+                </ul>
+                <a href="scenario-modification.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+            <!-- Escenario 4: Reprogramación de Cita -->
+            <div class="scenario-card" onclick="window.open('scenario-reschedule.html', '_blank')">
+                <div class="scenario-icon">📆</div>
+                <h3 class="scenario-title">4. Reprogramación de Cita</h3>
+                <p class="scenario-description">
+                    Reprogramación completa cuando el cliente no puede en la fecha original.
+                </p>
+                <ul class="scenario-features">
+                    <li>Verificación de motivo del cambio</li>
+                    <li>Nuevas fechas disponibles</li>
+                    <li>Selección de nuevo horario</li>
+                    <li>Confirmación con nuevo técnico</li>
+                </ul>
+                <a href="scenario-reschedule.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+            <!-- Escenario 5: Consulta de Estado -->
+            <div class="scenario-card" onclick="window.open('scenario-status.html', '_blank')">
+                <div class="scenario-icon">📋</div>
+                <h3 class="scenario-title">5. Consulta de Estado</h3>
+                <p class="scenario-description">
+                    Consulta del estado actual de la cita y detalles de instalación.
+                </p>
+                <ul class="scenario-features">
+                    <li>Estado de la cita actual</li>
+                    <li>Información del técnico asignado</li>
+                    <li>Recordatorios y notificaciones</li>
+                    <li>Opciones de contacto directo</li>
+                </ul>
+                <a href="scenario-status.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🚀 Sistema desarrollado por Deutsche Glasfaser - Bot inteligente para agendación de citas</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">
+                💡 Cada escenario demuestra diferentes capacidades del bot de WhatsApp
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Agregar efectos de hover y animaciones
+        document.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

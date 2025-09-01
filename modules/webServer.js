@@ -54,6 +54,28 @@ class WebServer {
       res.sendFile(path.join(__dirname, '../public/simulation.html'));
     });
 
+    // NUEVA: Ruta para el índice de escenarios
+    this.app.get('/scenarios', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/index-scenarios.html'));
+    });
+
+    // NUEVAS: Rutas para escenarios específicos
+    this.app.get('/scenario-cancellation', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/scenario-cancellation.html'));
+    });
+
+    this.app.get('/scenario-modification', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/scenario-modification.html'));
+    });
+
+    this.app.get('/scenario-reschedule', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/scenario-reschedule.html'));
+    });
+
+    this.app.get('/scenario-status', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/scenario-status.html'));
+    });
+
     // API para obtener todas las citas
     this.app.get('/api/appointments', async (req, res) => {
       try {
