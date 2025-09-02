@@ -685,26 +685,16 @@
             let userLanguage = 'es';
 
             const modificationFlow = [
+                // Continuación del proceso de modificación después de la confirmación de cita
                 {
                     type: 'bot',
-                    text: `🏠 Hallo! Ich bin der virtuelle Assistent von Deutsche Glasfaser\n\n📡 Ich sehe, dass Sie einen geplanten Termin für die Installation haben.\n\nWie kann ich Ihnen heute helfen?`,
-                    buttons: ['🔄 Zeit ändern', '📋 Meinen Termin abfragen', '❌ Termin stornieren'],
-                    delay: 1000
-                },
-                {
-                    type: 'user_choice',
-                    choice: '🔄 Cambiar horario',
-                    delay: 500
-                },
-                {
-                    type: 'bot',
-                    text: `🔄 Perfekt, ich helfe Ihnen dabei, die Zeit Ihres Termins zu ändern.\n\n🔍 Zuerst lassen Sie mich Ihren aktuellen Termin überprüfen:\n\n📋 **Aktueller Termin:**\n📅 **Datum:** Donnerstag 26 Dez, 2024\n🕒 **Zeit:** 14:00 - 16:00\n📍 **Adresse:** Berliner Str. 45, München\n👨‍🔧 **Techniker:** Hans Mueller\n\nIst das korrekt?`,
+                    text: `🔄 Perfekt, ich helfe Ihnen dabei, die Zeit Ihres Termins zu ändern.\n\n🔍 Zuerst lassen Sie mich Ihren aktuellen Termin überprüfen:\n\n📋 **Aktueller Termin:**\n📅 **Datum:** Donnerstag, 26. Dezember, 2024\n🕐 **Zeit:** 14:00 - 16:00\n📍 **Adresse:** Berliner Str. 45, München\n👨‍🔧 **Techniker:** Hans Mueller\n\n✅ **Status:** BESTÄTIGT\n\nIst das korrekt?`,
                     buttons: ['✅ Ja, das ist korrekt', '❌ Das ist nicht mein Termin', '📞 Daten überprüfen'],
                     delay: 2000
                 },
                 {
                     type: 'user_choice',
-                    choice: '✅ Sí, es correcto',
+                    choice: 'any', // Cualquier opción es válida
                     delay: 600
                 },
                 {
@@ -715,7 +705,7 @@
                 },
                 {
                     type: 'user_choice',
-                    choice: '🕙 Vie 27 Dic - 10:00-12:00',
+                    choice: 'any', // Cualquier opción es válida
                     delay: 800
                 },
                 {
@@ -740,6 +730,17 @@
                     text: `🎉 **Zeitänderung erfolgreich!**\n\n📋 **Bestätigung:**\n📅 **Neues Datum:** Freitag 27 Dez, 2024\n🕙 **Neue Zeit:** 10:00 - 12:00\n👨‍🔧 **Techniker:** Klaus Weber\n📍 **Adresse:** Berliner Str. 45, München\n📞 **Techniker-Kontakt:** +49 89 123 4567\n\n📧 **Eine Bestätigung wurde per E-Mail gesendet**\n📱 **Sie erhalten eine Erinnerung 24h vorher**\n\nBenötigen Sie etwas anderes?`,
                     buttons: ['📧 Bestätigung erneut senden', '📱 Erinnerung einrichten', '🏠 Hauptmenü'],
                     delay: 3000
+                },
+                {
+                    type: 'user_choice',
+                    choice: 'any', // Cualquier opción es válida
+                    delay: 500
+                },
+                {
+                    type: 'bot',
+                    text: `📧 **Bestätigung wird gesendet...**\n\n✅ **E-Mail Bestätigung:**\n📧 An: kunde@email.com\n📅 Termin: Freitag 27 Dez, 10:00-12:00\n👨‍🔧 Techniker: Klaus Weber\n📍 Adresse: Berliner Str. 45, München\n\n📱 **WhatsApp Erinnerung:**\n⏰ 24h vor dem Termin\n📞 Direkter Kontakt zum Techniker\n\nVielen Dank für Ihr Vertrauen in Deutsche Glasfaser! 🚀`,
+                    buttons: ['🏠 Hauptmenü', '📞 Techniker kontaktieren', '📋 Weitere Termine'],
+                    delay: 2000
                 }
             ];
 
@@ -750,16 +751,18 @@
                 });
             }
 
-            function addMessage(content, isUser = false, hasButtons = false, buttons = []) {
+            function addMessage(content, isUser = false, hasButtons = false, buttons = [], customTime = null) {
                 const chatMessages = document.getElementById('chatMessages');
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+                
+                const timestamp = customTime || getCurrentTime();
                 
                 let messageHTML = `
                     <div class="message-bubble">
                         <div class="message-content">${content}</div>
                         <div class="message-info">
-                            <span class="message-timestamp">${getCurrentTime()}</span>
+                            <span class="message-timestamp">${timestamp}</span>
                             ${!isUser ? '<span class="message-status-icon"></span>' : ''}
                         </div>
                     </div>
@@ -857,6 +860,13 @@
                             hideTypingIndicator();
                             addMessage(step.text, false, step.buttons && step.buttons.length > 0, step.buttons);
                             currentStep++;
+                            
+                            // Si no hay botones, continuar automáticamente al siguiente paso
+                            if (!step.buttons || step.buttons.length === 0) {
+                                setTimeout(() => {
+                                    nextStep();
+                                }, 1000);
+                            }
                         }, step.delay);
                         
                     } else if (step.type === 'user_choice') {
@@ -916,10 +926,56 @@
                     </div>
                 `;
                 
+                // Cargar historial previo de la conversación
+                loadPreviousHistory();
+                
+                // Iniciar el flujo de modificación después del historial
+                // setTimeout(() => {
+                //     nextStep();
+                // }, 1000);
+            };
+
+            // Función para cargar el historial previo
+            function loadPreviousHistory() {
+                // Historial previo de la conversación donde el usuario ya tiene una cita confirmada
+                const previousMessages = [
+                    {
+                        text: '🏠 Hallo! Ich bin der virtuelle Assistent von Deutsche Glasfaser\n\n📡 Ich sehe, dass Sie einen geplanten Termin für die Installation haben.\n\nWie kann ich Ihnen heute helfen?',
+                        isUser: false,
+                        time: '09:15'
+                    },
+                    {
+                        text: '📋 Meinen Termin abfragen',
+                        isUser: true,
+                        time: '09:16'
+                    },
+                    {
+                        text: '📋 Perfekt, lassen Sie mich die Informationen zu Ihrem Termin suchen.\n\n🔍 **Suche läuft...**\n\n✅ Hier sind die Details Ihres Termins:',
+                        isUser: false,
+                        time: '09:16'
+                    },
+                    {
+                        text: '📋 **IHR BESTÄTIGTER TERMIN**\n\n✅ **Status:** BESTÄTIGT\n📅 **Datum:** Donnerstag, 26. Dezember, 2024\n🕐 **Zeit:** 14:00 - 16:00\n📍 **Adresse:** Berliner Str. 45, München\n👨‍🔧 **Techniker:** Hans Mueller\n📞 **Kontakt:** +49 89 123 4567\n\n🎯 **Fortschritt:** Vorbereitungen abgeschlossen\n📦 **Ausrüstung:** Bereit für Installation\n🚗 **Route:** Techniker zugewiesen\n\nMöchten Sie eine Änderung vornehmen?',
+                        isUser: false,
+                        time: '09:17'
+                    },
+                    {
+                        text: '🔄 Zeit ändern',
+                        isUser: true,
+                        time: '09:18'
+                    }
+                ];
+
+                // Cargar todos los mensajes del historial de una vez
+                previousMessages.forEach((message, index) => {
+                    addMessage(message.text, message.isUser, false, [], message.time);
+                });
+
+                // Después de cargar el historial, continuar directamente con el flujo de modificación
                 setTimeout(() => {
                     nextStep();
                 }, 1000);
-            };
+            }
         </script>
     </body>
 </html>

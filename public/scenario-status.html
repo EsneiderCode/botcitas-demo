@@ -685,34 +685,7 @@
             let userLanguage = 'es';
 
             const statusFlow = [
-                {
-                    type: 'bot',
-                    text: `🏠 Hallo! Ich bin der virtuelle Assistent von Deutsche Glasfaser\n\n📡 Ich bin hier, um Ihnen bei Ihrem Glasfaser-Internetservice zu helfen.\n\nWelche Informationen benötigen Sie?`,
-                    buttons: ['📋 Status meines Termins', '📞 Techniker kontaktieren', '📊 Installationsinfo'],
-                    delay: 1000
-                },
-                {
-                    type: 'user_choice',
-                    choice: '📋 Estado de mi cita',
-                    delay: 500
-                },
-                {
-                    type: 'bot',
-                    text: `📋 Perfekt, ich werde den Status Ihres Installationstermins abfragen.\n\n🔍 **Suche nach Informationen...**\n\n✅ Ich habe Ihren Termin gefunden:`,
-                    buttons: [],
-                    delay: 2000
-                },
-                {
-                    type: 'bot',
-                    text: `📋 **STATUS IHRES TERMINS**\n\n✅ **Status:** BESTÄTIGT\n📅 **Datum:** Mittwoch 25 Dez, 2024\n🕑 **Zeit:** 11:00 - 13:00\n📍 **Adresse:** Goethestraße 12, Frankfurt\n👨‍🔧 **Techniker:** Andreas Müller\n📞 **Kontakt:** +49 69 555 0123\n\n🎯 **Fortschritt:** Vorbereitungen abgeschlossen\n📦 **Ausrüstung:** Bereit für Installation\n🚗 **Route:** Techniker zugewiesen\n\nWas möchten Sie noch wissen?`,
-                    buttons: ['👨‍🔧 Techniker-Info', '📦 Was installiert wird', '⏰ Erinnerungen'],
-                    delay: 2500
-                },
-                {
-                    type: 'user_choice',
-                    choice: '👨‍🔧 Info del técnico',
-                    delay: 600
-                },
+                // Continuación del proceso de consulta después de la confirmación de cita
                 {
                     type: 'bot',
                     text: `👨‍🔧 **TECHNIKER-INFORMATIONEN**\n\n🧑‍💼 **Name:** Andreas Müller\n⭐ **Erfahrung:** 8 Jahre bei Deutsche Glasfaser\n🏆 **Bewertung:** 4.9/5 (basierend auf 156 Installationen)\n🔧 **Spezialisierung:** Wohn- und Geschäftsinstallationen\n🗣️ **Sprachen:** Deutsch, Englisch\n\n📱 **Direkter Kontakt:** +49 69 555 0123\n📧 **E-Mail:** a.mueller@deutscheglasf.de\n\n💡 **Hinweis:** Andreas führt eine vollständige Installation einschließlich WiFi-Konfiguration durch\n\nBenötigen Sie weitere Details?`,
@@ -721,7 +694,7 @@
                 },
                 {
                     type: 'user_choice',
-                    choice: '📦 Equipos a instalar',
+                    choice: 'any', // Cualquier opción es válida
                     delay: 700
                 },
                 {
@@ -732,7 +705,7 @@
                 },
                 {
                     type: 'user_choice',
-                    choice: '⏰ Configurar recordatorio',
+                    choice: 'any', // Cualquier opción es válida
                     delay: 800
                 },
                 {
@@ -750,16 +723,18 @@
                 });
             }
 
-            function addMessage(content, isUser = false, hasButtons = false, buttons = []) {
+            function addMessage(content, isUser = false, hasButtons = false, buttons = [], customTime = null) {
                 const chatMessages = document.getElementById('chatMessages');
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+                
+                const timestamp = customTime || getCurrentTime();
                 
                 let messageHTML = `
                     <div class="message-bubble">
                         <div class="message-content">${content}</div>
                         <div class="message-info">
-                            <span class="message-timestamp">${getCurrentTime()}</span>
+                            <span class="message-timestamp">${timestamp}</span>
                             ${!isUser ? '<span class="message-status-icon"></span>' : ''}
                         </div>
                     </div>
@@ -861,8 +836,15 @@
                         
                     } else if (step.type === 'user_choice') {
                         // Este paso se maneja cuando el usuario hace clic en un botón
-                        currentStep++;
-                        nextStep();
+                        // Si la opción es 'any', cualquier selección es válida
+                        if (step.choice === 'any') {
+                            currentStep++;
+                            nextStep();
+                        } else {
+                            // Para opciones específicas (como confirmación)
+                            currentStep++;
+                            nextStep();
+                        }
                     }
                 }
             }
@@ -916,10 +898,61 @@
                     </div>
                 `;
                 
-                setTimeout(() => {
-                    nextStep();
-                }, 1000);
+                // Cargar historial previo de la conversación
+                loadPreviousHistory();
             };
+
+            // Función para cargar el historial previo
+            function loadPreviousHistory() {
+                // Historial previo de la conversación donde el usuario ya tiene una cita confirmada
+                const previousMessages = [
+                    {
+                        text: '🏠 Hallo! Ich bin der virtuelle Assistent von Deutsche Glasfaser\n\n📡 Ich sehe, dass Sie einen geplanten Termin für die Installation haben.\n\nWie kann ich Ihnen heute helfen?',
+                        isUser: false,
+                        time: '11:45'
+                    },
+                    {
+                        text: '📋 Meinen Termin abfragen',
+                        isUser: true,
+                        time: '11:46'
+                    },
+                    {
+                        text: '📋 Perfekt, ich werde den Status Ihres Installationstermins abfragen.\n\n🔍 **Suche nach Informationen...**\n\n✅ Ich habe Ihren Termin gefunden:',
+                        isUser: false,
+                        time: '11:46'
+                    },
+                    {
+                        text: '📋 **STATUS IHRES TERMINS**\n\n✅ **Status:** BESTÄTIGT\n📅 **Datum:** Mittwoch, 25. Dezember, 2024\n🕑 **Zeit:** 11:00 - 13:00\n📍 **Adresse:** Goethestraße 12, Frankfurt\n👨‍🔧 **Techniker:** Andreas Müller\n📞 **Kontakt:** +49 69 555 0123\n\n🎯 **Fortschritt:** Vorbereitungen abgeschlossen\n📦 **Ausrüstung:** Bereit für Installation\n🚗 **Route:** Techniker zugewiesen\n\nWas möchten Sie noch wissen?',
+                        isUser: false,
+                        time: '11:47'
+                    },
+                    {
+                        text: '👨‍🔧 Techniker-Info',
+                        isUser: true,
+                        time: '11:48'
+                    },
+                    {
+                        text: '🎉 **Ihr Termin ist bestätigt!**\n\n📅 **Datum und Uhrzeit:** Mittwoch, 25. Dezember, 11:00 – 13:00\n🏠 **Service:** Glasfaser-Installation\n🔧 **Unternehmen:** Deutsche Glasfaser\n📲 Wir senden Ihnen einen Tag vorher eine Erinnerung über WhatsApp.\n✅ Der Techniker wird zur vereinbarten Zeit ankommen, um die komplette Installation durchzuführen.\n\nVielen Dank, dass Sie sich für unsere Glasfaserdienste entschieden haben! 🚀',
+                        isUser: false,
+                        time: '11:49'
+                    }
+                ];
+
+                // Cargar todos los mensajes del historial de una vez
+                previousMessages.forEach((message, index) => {
+                    addMessage(message.text, message.isUser, false, [], message.time);
+                });
+
+                // Después de cargar el historial, simular que el usuario escribe al bot
+                setTimeout(() => {
+                    addMessage('Hallo, können Sie mir mehr Informationen über den Techniker geben?', true);
+                    
+                    // Después de que el usuario escribe, el bot responde
+                    setTimeout(() => {
+                        nextStep();
+                    }, 1000);
+                }, 1500);
+            }
         </script>
     </body>
 </html>
