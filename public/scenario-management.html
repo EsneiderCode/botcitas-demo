@@ -964,9 +964,45 @@
                              this.currentStep = 1;
                          }
                          break;
+                         
+                     case 5: // Selección de fecha
+                         if (message.includes("Freitag, 5. September") || message.includes("Montag, 8. September")) {
+                             await this.addMessage("✅ Neues Datum ausgewählt. Wählen Sie eine neue Uhrzeit:", 'received', 1000);
+                             setTimeout(() => {
+                                 this.showQuickReplies([
+                                     { text: "🕐 09:00 – 11:00" },
+                                     { text: "🕐 13:00 – 15:00" },
+                                     { text: "🕐 15:00 – 17:00" }
+                                 ]);
+                             }, 1500);
+                             this.currentStep = 6; // Selección de hora
+                         } else if (message.includes("Abbrechen")) {
+                             await this.addMessage("✅ Änderung abgebrochen. Ihr Termin bleibt unverändert.", 'received', 1000);
+                             setTimeout(() => {
+                                 this.showManagementOptions();
+                             }, 1500);
+                             this.currentStep = 1;
+                         }
+                         break;
+                         
+                     case 6: // Selección de hora
+                         if (message.includes("09:00") || message.includes("13:00") || message.includes("15:00")) {
+                             await this.addMessage("✅ Ihr Termin wurde erfolgreich geändert.", 'received', 1000);
+                             setTimeout(() => {
+                                 this.showManagementOptions();
+                             }, 1500);
+                             this.currentStep = 1;
+                         } else if (message.includes("Abbrechen")) {
+                             await this.addMessage("✅ Änderung abgebrochen. Ihr Termin bleibt unverändert.", 'received', 1000);
+                             setTimeout(() => {
+                                 this.showManagementOptions();
+                             }, 1500);
+                             this.currentStep = 1;
+                         }
+                         break;
                         
                     default:
-                        await this.addMessage("Gracias. ¿Necesitas algo más?", 'received', 1000);
+                        await this.addMessage("Danke. Kann ich Ihnen noch bei etwas anderem helfen?", 'received', 1000);
                         break;
                 }
                 

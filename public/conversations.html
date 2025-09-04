@@ -796,6 +796,15 @@
 
                 await this.addMessage(welcomeMessage, 'received', 500);
                 
+                // Segundo mensaje con términos y condiciones
+                const termsMessage = `📋 **Allgemeine Geschäftsbedingungen**
+
+🔗 https://deutsche-glasfaser.de/agb
+
+⚠️ Mit der Fortsetzung dieser Konversation stimmen Sie unseren AGB zu.`;
+
+                await this.addMessage(termsMessage, 'received', 2000);
+                
                 // Mostrar botones de selección de idioma con alemán primero y español al final
                 setTimeout(() => {
                     this.showQuickReplies([
@@ -803,7 +812,7 @@
                         { text: "🇺🇸 English" },
                         { text: "🇪🇸 Español" }
                     ]);
-                }, 1500);
+                }, 3500);
                 
                 this.currentStep = 1; // Selección de idioma
                 this.isWaitingForResponse = false;
@@ -820,13 +829,17 @@
             }
 
             async processUserResponse(message) {
+                console.log('Processing message:', message, 'at step:', this.currentStep);
+                
                 switch (this.currentStep) {
                     case 1: // Selección de idioma
                         let selectedLanguage = 'de'; // Por defecto alemán
                         
                         if (message === "🇩🇪 Deutsch") {
                             selectedLanguage = 'de';
-                            const germanMessage = `📡 Ihre Glasfaser-Installation ist bereit.`;
+                            const germanMessage = `📡 Ihre Glasfaser-Installation ist bereit.
+
+📋 Bitte drücken Sie "TERMIN vereinbaren" um fortzufahren.`;
                             
                             await this.addMessage(germanMessage, 'received', 1000);
                             
@@ -839,7 +852,7 @@
                             selectedLanguage = 'en';
                             const englishMessage = `📡 Your fiber optic installation is ready.
 
-🛠 To schedule:`;
+📋 Please press "SCHEDULE my appointment" to continue.`;
                             
                             await this.addMessage(englishMessage, 'received', 1000);
                             
@@ -852,7 +865,7 @@
                             selectedLanguage = 'es';
                             const spanishMessage = `📡 Tu instalación de fibra óptica está lista.
 
-🛠 Para agendar:`;
+📋 Presiona "AGENDAR mi cita" para continuar.`;
                             
                             await this.addMessage(spanishMessage, 'received', 1000);
                             
@@ -903,11 +916,15 @@
                         break;
 
                     case 4: // Confirmación del horario
+                        console.log('Case 4 - Confirmation step');
                         if (message.includes("Ja") || message.includes("Sí") || message.includes("Yes")) {
+                            console.log('User confirmed, asking for reminder');
                             await this.askForReminder();
-                        } else if (message.includes("otro horario") || message.includes("another time") || message.includes("andere Zeit")) {
+                        } else if (message.includes("otro horario") || message.includes("another time") || message.includes("andere Zeit") || message.includes("Andere Zeit")) {
+                            console.log('User wants another time, showing available slots');
                             await this.showAvailableSlots();
                         } else if (message.includes("Cancelar") || message.includes("Cancel") || message.includes("Abbrechen")) {
+                            console.log('User cancelled');
                             await this.cancelProcess();
                         }
                         break;
@@ -932,21 +949,21 @@
                                 buttons = [
                                     { text: "📅 Datum ändern" },
                                     { text: "⏰ Uhrzeit ändern" },
-                                    { text: "❌ Änderung abbrechen" }
+                                    { text: "❌ Abbrechen" }
                                 ];
                             } else if (lang === 'es') {
                                 modifyText = "🔄 Vamos a modificar tu cita. ¿Qué quieres cambiar?";
                                 buttons = [
                                     { text: "📅 Cambiar fecha" },
                                     { text: "⏰ Cambiar hora" },
-                                    { text: "❌ Cancelar modificación" }
+                                    { text: "❌ Cancelar" }
                                 ];
                             } else { // English
                                 modifyText = "🔄 Let's modify your appointment. What would you like to change?";
                                 buttons = [
                                     { text: "📅 Change date" },
                                     { text: "⏰ Change time" },
-                                    { text: "❌ Cancel modification" }
+                                    { text: "❌ Cancel" }
                                 ];
                             }
                             
@@ -1055,8 +1072,8 @@
                 let headerText, bodyText;
                 
                 if (lang === 'de') {
-                    headerText = '⏰ Más';
-                    bodyText = 'Más horarios:';
+                    headerText = '⏰ Mehr';
+                    bodyText = 'Weitere Zeiten:';
                 } else if (lang === 'es') {
                     headerText = '⏰ Más';
                     bodyText = 'Más horarios:';
@@ -1071,7 +1088,7 @@
                     // Mostrar slots 3 y 4 + opción de volver
                     let backText;
                     if (lang === 'de') {
-                        backText = "⬅️ Anteriores";
+                        backText = "⬅️ Zurück";
                     } else if (lang === 'es') {
                         backText = "⬅️ Anteriores";
                     } else {
@@ -1094,24 +1111,25 @@
                 const today = new Date();
                 const slots = [];
                 
-                // Generar fechas futuras
+                const dayNames = {
+                    'es': ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    'de': ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+                };
+                
+                const monthNames = {
+                    'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+                    'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    'de': ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+                };
+                
+                const lang = this.selectedLanguage || 'de';
+                
+                // Generar 4 días diferentes con horarios variados
                 for (let i = 1; i <= 4; i++) {
                     const date = new Date(today);
                     date.setDate(today.getDate() + i);
                     
-                    const dayNames = {
-                        'es': ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-                        'en': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                        'de': ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
-                    };
-                    
-                    const monthNames = {
-                        'es': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
-                        'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                        'de': ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
-                    };
-                    
-                    const lang = this.selectedLanguage || 'de';
                     const dayName = dayNames[lang][date.getDay()];
                     const monthName = monthNames[lang][date.getMonth()];
                     
@@ -1124,27 +1142,33 @@
                         dateStr = `${dayName} ${date.getDate()} de ${monthName}`;
                     }
                     
-                    if (i <= 2) {
-                        slots.push({
-                            id: slots.length + 1,
-                            date: dateStr,
-                            time: '09:00 – 11:00',
-                            fullDate: date
-                        });
-                        slots.push({
-                            id: slots.length + 1,
-                            date: dateStr,
-                            time: '13:00 – 15:00',
-                            fullDate: date
-                        });
-                    }
+                    // Diferentes horarios para cada día
+                    const timeSlots = [
+                        '09:00 – 11:00',
+                        '13:00 – 15:00',
+                        '15:00 – 17:00',
+                        '17:00 – 19:00'
+                    ];
+                    
+                    // Asignar horarios diferentes a cada día
+                    const timeSlot = timeSlots[i - 1];
+                    
+                    slots.push({
+                        id: i,
+                        date: dateStr,
+                        time: timeSlot,
+                        fullDate: date
+                    });
                 }
                 
-                return slots.slice(0, 4);
+                return slots;
             }
 
             async showAvailableSlots() {
+                console.log('showAvailableSlots called');
                 this.availableSlots = this.generateAvailableSlots();
+                console.log('Available slots:', this.availableSlots);
+                
                 const lang = this.selectedLanguage || 'de';
                 
                 let headerText, bodyText;
@@ -1166,7 +1190,7 @@
                     // Mostrar solo 2 horarios + opción "Ver otros" (máximo 3 botones)
                     let moreTimesText;
                     if (lang === 'de') {
-                        moreTimesText = "Más ⏰";
+                        moreTimesText = "Mehr ⏰";
                     } else if (lang === 'es') {
                         moreTimesText = "Más ⏰";
                     } else {
@@ -1178,6 +1202,8 @@
                         { text: `📆 ${this.availableSlots[1].date} - 🕐 ${this.availableSlots[1].time}` },
                         { text: moreTimesText }
                     ];
+                    
+                    console.log('Showing options:', options);
                     this.showQuickReplies(options);
                 }, 1500);
                 
@@ -1307,19 +1333,19 @@ ${reminderText}`;
                     if (lang === 'de') {
                         buttons = [
                             { text: "🔄 Termin ändern" },
-                            { text: "❌ Termin stornieren" },
+                            { text: "❌ Stornieren" },
                             { text: "📋 Status prüfen" }
                         ];
                     } else if (lang === 'es') {
                         buttons = [
                             { text: "🔄 Modificar cita" },
-                            { text: "❌ Cancelar cita" },
+                            { text: "❌ Cancelar" },
                             { text: "📋 Ver estado" }
                         ];
                     } else { // English
                         buttons = [
                             { text: "🔄 Modify appointment" },
-                            { text: "❌ Cancel appointment" },
+                            { text: "❌ Cancel" },
                             { text: "📋 Check status" }
                         ];
                     }
