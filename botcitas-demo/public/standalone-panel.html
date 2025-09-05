@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Panel de Citas - Sistema de Gestión</title>
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 24px 32px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(30, 64, 175, 0.3);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+
+        .connection-status.connected {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border-color: #22c55e;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .appointments-section {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 24px 32px;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .appointments-container {
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .appointment-card {
+            padding: 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .appointment-card:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transform: translateX(4px);
+        }
+
+        .appointment-card:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .appointment-id {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .appointment-status {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+        }
+
+        .status-confirmada { 
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); 
+            color: #166534; 
+            border-color: #22c55e;
+        }
+        .status-pendiente { 
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+            color: #92400e; 
+            border-color: #f59e0b;
+        }
+        .status-reagendada { 
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); 
+            color: #1e40af; 
+            border-color: #3b82f6;
+        }
+        .status-cancelada { 
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); 
+            color: #991b1b; 
+            border-color: #ef4444;
+        }
+
+        .appointment-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .info-item-text {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .last-updated {
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-top: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        /* Scrollbar personalizado */
+        .appointments-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .appointments-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .appointments-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-radius: 4px;
+        }
+
+        .appointments-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="header-content">
+                    <div class="logo">
+                        <div class="logo-icon">📋</div>
+                        <div class="logo-text">Sistema de Gestión de Citas</div>
+                    </div>
+                    <div class="nav-buttons">
+                        <a href="#" class="nav-btn active">📊 Panel Principal</a>
+                        <button class="nav-btn" onclick="refreshData()">🔄 Actualizar</button>
+                    </div>
+                    <div class="connection-status connected">
+                        <span>🟢 Datos Locales</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="stats-grid" id="statsGrid">
+                <!-- Estadísticas se cargarán aquí -->
+            </div>
+
+            <div class="appointments-section">
+                <div class="section-header">
+                    📅 Citas Agendadas <span id="appointmentCount"></span>
+                </div>
+                <div class="appointments-container" id="appointmentsContainer">
+                    <div class="loading">Cargando citas...</div>
+                </div>
+                <div class="last-updated" id="lastUpdated">
+                    Última actualización: --
+                </div>
+            </div>
+        </div>
+
+        <script>
+        class AppointmentDashboard {
+            constructor() {
+                this.appointments = this.getHardcodedAppointments();
+                this.stats = this.calculateStats();
+                this.initializeDashboard();
+            }
+
+            getHardcodedAppointments() {
+                return [
+                    {
+                        id: 'APT-001',
+                        cliente: 'María González',
+                        telefono: '+57 300 123 4567',
+                        horaSeleccionada: '09:00 AM',
+                        fechaContacto: '2024-01-15',
+                        estado: 'confirmada',
+                        servicio: 'Consulta Médica',
+                        notas: 'Primera consulta'
+                    },
+                    {
+                        id: 'APT-002',
+                        cliente: 'Carlos Rodríguez',
+                        telefono: '+57 310 987 6543',
+                        horaSeleccionada: '10:30 AM',
+                        fechaContacto: '2024-01-15',
+                        estado: 'pendiente',
+                        servicio: 'Control',
+                        notas: 'Seguimiento post-tratamiento'
+                    },
+                    {
+                        id: 'APT-003',
+                        cliente: 'Ana Martínez',
+                        telefono: '+57 315 456 7890',
+                        horaSeleccionada: '02:00 PM',
+                        fechaContacto: '2024-01-15',
+                        estado: 'confirmada',
+                        servicio: 'Examen',
+                        notas: 'Examen de laboratorio'
+                    },
+                    {
+                        id: 'APT-004',
+                        cliente: 'Luis Fernández',
+                        telefono: '+57 320 111 2222',
+                        horaSeleccionada: '11:00 AM',
+                        fechaContacto: '2024-01-16',
+                        estado: 'reagendada',
+                        servicio: 'Consulta Especializada',
+                        notas: 'Reagendada por solicitud del paciente'
+                    },
+                    {
+                        id: 'APT-005',
+                        cliente: 'Sofia Herrera',
+                        telefono: '+57 301 333 4444',
+                        horaSeleccionada: '03:30 PM',
+                        fechaContacto: '2024-01-16',
+                        estado: 'cancelada',
+                        servicio: 'Consulta Médica',
+                        notas: 'Cancelada por emergencia familiar'
+                    },
+                    {
+                        id: 'APT-006',
+                        cliente: 'Diego Morales',
+                        telefono: '+57 304 555 6666',
+                        horaSeleccionada: '08:30 AM',
+                        fechaContacto: '2024-01-17',
+                        estado: 'confirmada',
+                        servicio: 'Vacunación',
+                        notas: 'Vacuna anual'
+                    },
+                    {
+                        id: 'APT-007',
+                        cliente: 'Isabella Castro',
+                        telefono: '+57 312 777 8888',
+                        horaSeleccionada: '01:00 PM',
+                        fechaContacto: '2024-01-17',
+                        estado: 'pendiente',
+                        servicio: 'Consulta Médica',
+                        notas: 'Consulta de rutina'
+                    },
+                    {
+                        id: 'APT-008',
+                        cliente: 'Roberto Silva',
+                        telefono: '+57 318 999 0000',
+                        horaSeleccionada: '04:00 PM',
+                        fechaContacto: '2024-01-18',
+                        estado: 'confirmada',
+                        servicio: 'Control',
+                        notas: 'Control de presión arterial'
+                    },
+                    {
+                        id: 'APT-009',
+                        cliente: 'Carmen López',
+                        telefono: '+57 305 123 4567',
+                        horaSeleccionada: '09:30 AM',
+                        fechaContacto: '2024-01-18',
+                        estado: 'reagendada',
+                        servicio: 'Consulta Médica',
+                        notas: 'Reagendada por disponibilidad del médico'
+                    },
+                    {
+                        id: 'APT-010',
+                        cliente: 'Andrés Jiménez',
+                        telefono: '+57 311 987 6543',
+                        horaSeleccionada: '02:30 PM',
+                        fechaContacto: '2024-01-19',
+                        estado: 'confirmada',
+                        servicio: 'Examen',
+                        notas: 'Examen de vista'
+                    }
+                ];
+            }
+
+            calculateStats() {
+                return {
+                    total: this.appointments.length,
+                    confirmadas: this.appointments.filter(apt => apt.estado === 'confirmada').length,
+                    pendientes: this.appointments.filter(apt => apt.estado === 'pendiente').length,
+                    reagendadas: this.appointments.filter(apt => apt.estado === 'reagendada').length,
+                    canceladas: this.appointments.filter(apt => apt.estado === 'cancelada').length
+                };
+            }
+
+            initializeDashboard() {
+                this.updateStats();
+                this.renderAppointments();
+                this.updateLastUpdated(new Date().toISOString());
+            }
+
+            // Función para simular actualización de datos
+            simulateDataUpdate() {
+                // Simular una pequeña variación en los datos
+                const randomIndex = Math.floor(Math.random() * this.appointments.length);
+                const appointment = this.appointments[randomIndex];
+                
+                // Simular cambio de estado ocasional
+                if (Math.random() < 0.1) { // 10% de probabilidad
+                    const estados = ['confirmada', 'pendiente', 'reagendada', 'cancelada'];
+                    const nuevoEstado = estados[Math.floor(Math.random() * estados.length)];
+                    appointment.estado = nuevoEstado;
+                    
+                    this.stats = this.calculateStats();
+                    this.updateStats();
+                    this.renderAppointments();
+                    this.updateLastUpdated(new Date().toISOString());
+                }
+            }
+
+            updateStats() {
+                const statsGrid = document.getElementById('statsGrid');
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${this.stats.total || 0}</div>
+                        <div class="stat-label">Total Citas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${this.stats.confirmadas || 0}</div>
+                        <div class="stat-label">Confirmadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${this.stats.pendientes || 0}</div>
+                        <div class="stat-label">Pendientes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${this.stats.reagendadas || 0}</div>
+                        <div class="stat-label">Reagendadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${this.stats.canceladas || 0}</div>
+                        <div class="stat-label">Canceladas</div>
+                    </div>
+                `;
+            }
+
+            renderAppointments() {
+                const container = document.getElementById('appointmentsContainer');
+                const countEl = document.getElementById('appointmentCount');
+                
+                countEl.textContent = `(${this.appointments.length})`;
+
+                if (this.appointments.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay citas que mostrar</div>';
+                    return;
+                }
+
+                container.innerHTML = this.appointments.map(appointment => `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="appointment-id">#${appointment.id}</div>
+                            <div class="appointment-status status-${appointment.estado}">
+                                ${appointment.estado}
+                            </div>
+                        </div>
+                        <div class="appointment-info">
+                            <div class="info-item">
+                                <div class="info-item-icon">👤</div>
+                                <div class="info-item-text"><strong>Cliente:</strong> ${appointment.cliente}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-icon">📞</div>
+                                <div class="info-item-text"><strong>Teléfono:</strong> ${appointment.telefono}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-icon">🕐</div>
+                                <div class="info-item-text"><strong>Hora:</strong> ${appointment.horaSeleccionada}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-icon">📅</div>
+                                <div class="info-item-text"><strong>Fecha:</strong> ${appointment.fechaContacto}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-icon">🏥</div>
+                                <div class="info-item-text"><strong>Servicio:</strong> ${appointment.servicio}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-icon">📝</div>
+                                <div class="info-item-text"><strong>Notas:</strong> ${appointment.notas}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateLastUpdated(timestamp) {
+                const lastUpdatedEl = document.getElementById('lastUpdated');
+                const date = new Date(timestamp);
+                lastUpdatedEl.textContent = `Última actualización: ${date.toLocaleString('es-ES')}`;
+            }
+        }
+
+        // Función global para actualizar datos
+        function refreshData() {
+            const dashboard = window.dashboard;
+            if (dashboard) {
+                dashboard.simulateDataUpdate();
+            }
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            window.dashboard = new AppointmentDashboard();
+        });
+    </script>
+    </body>
+</html>

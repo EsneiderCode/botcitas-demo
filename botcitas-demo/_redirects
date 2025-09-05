@@ -1,0 +1,5 @@
+# Redirects for GitHub Pages
+/conversations.html /public/conversations.html 200
+/demo.html /public/demo.html 200
+/simulation.html /public/simulation.html 200
+/scenarios /public/index-scenarios.html 200 

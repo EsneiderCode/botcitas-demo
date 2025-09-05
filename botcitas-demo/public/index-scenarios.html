@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot de Citas - Escenarios de Demostración</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .scenario-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .scenario-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .scenario-description {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .scenario-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .scenario-features li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .scenario-features li:before {
+            content: "✓ ";
+            color: #25D366;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .scenario-button {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .scenario-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 50px;
+        }
+
+        .footer p {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .scenario-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Bot de Citas CLARITY</h1>
+            <p>Explora los diferentes escenarios de conversación del bot de WhatsApp para agendación de citas de instalación de fibra óptica</p>
+        </div>
+
+        <div class="scenarios-grid">
+            <!-- Escenario 1: Agendamiento de Cita -->
+            <div class="scenario-card" onclick="window.open('conversations.html', '_blank')">
+                <div class="scenario-icon">📅</div>
+                <h3 class="scenario-title">1. Agendamiento de Cita</h3>
+                <p class="scenario-description">
+                    Flujo completo para agendar una nueva cita de instalación de fibra óptica.
+                </p>
+                <ul class="scenario-features">
+                    <li>Selección de idioma (Alemán, Inglés, Español)</li>
+                    <li>Elección de horarios disponibles</li>
+                    <li>Confirmación con datos del técnico</li>
+                    <li>Opción de recordatorio</li>
+                </ul>
+                <a href="conversations.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+            <!-- Escenario 2: Gestión de Citas (Cancelar, Modificar, Consultar) -->
+            <div class="scenario-card" onclick="window.open('scenario-management.html', '_blank')">
+                <div class="scenario-icon">🤖</div>
+                <h3 class="scenario-title">2. Gestión de Citas</h3>
+                <p class="scenario-description">
+                    Escenario que muestra el historial completo de una cita ya agendada y permite gestionarla.
+                </p>
+                <ul class="scenario-features">
+                    <li>📋 Historial completo de conversación</li>
+                    <li>🔄 Modificación de citas</li>
+                    <li>❌ Cancelación de citas</li>
+                    <li>📊 Consulta de estado</li>
+                </ul>
+                <a href="scenario-management.html" class="scenario-button" target="_blank">
+                    Ver Demostración
+                </a>
+            </div>
+
+
+        </div>
+
+        <div class="footer">
+            <p>🚀 Sistema desarrollado por CLARITY - Bot inteligente para agendación de citas</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">
+                💡 Cada escenario demuestra diferentes capacidades del bot de WhatsApp
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Agregar efectos de hover y animaciones
+        document.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

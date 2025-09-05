@@ -1,0 +1,20 @@
+title: "Bot de WhatsApp - Deutsche Glasfaser"
+description: "Simulador interactivo para agendación de citas de instalación de fibra óptica"
+baseurl: ""
+url: "https://esneidercode.github.io"
+repository: "EsneiderCode/botcitas-demo"
+
+# Jekyll configuration
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Include/exclude files
+include:
+  - public/
+  - _redirects
+
+# GitHub Pages plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap 
