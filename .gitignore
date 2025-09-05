@@ -84,7 +84,6 @@ jspm_packages/
 .next
 
 # Temporary images
-*.png
 *.jpg
 *.jpeg
 *.gif 
