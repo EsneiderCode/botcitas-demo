@@ -3,17 +3,18 @@
 
 const ELEVENLABS_CONFIG = {
     // Tu API Key de ElevenLabs - Obténla en: https://elevenlabs.io/app/settings/api-keys
-    apiKey: 'TU_ELEVENLABS_API_KEY_AQUI',
+    // Puedes usar variables de entorno o configurar directamente aquí
+    apiKey: process.env.ELEVENLABS_API_KEY || 'TU_ELEVENLABS_API_KEY_AQUI',
     
     // ID de la voz por defecto (se usará si no se detecta idioma)
     voiceId: 'zl7GSCFv2aKISCB2LjZz', // Voz alemana por defecto
     
     // Configuración de la voz
     voiceSettings: {
-        stability: 0.5,        // Estabilidad de la voz (0.0 - 1.0)
-        similarity_boost: 0.5, // Similitud con la voz original (0.0 - 1.0)
-        style: 0.0,            // Estilo de la voz (0.0 - 1.0)
-        use_speaker_boost: true // Mejora del altavoz
+        stability: parseFloat(process.env.ELEVENLABS_STABILITY) || 0.5,        // Estabilidad de la voz (0.0 - 1.0)
+        similarity_boost: parseFloat(process.env.ELEVENLABS_SIMILARITY_BOOST) || 0.5, // Similitud con la voz original (0.0 - 1.0)
+        style: parseFloat(process.env.ELEVENLABS_STYLE) || 0.0,            // Estilo de la voz (0.0 - 1.0)
+        use_speaker_boost: process.env.ELEVENLABS_USE_SPEAKER_BOOST === 'true' || true // Mejora del altavoz
     },
     
     // URL base de la API

@@ -3,16 +3,17 @@
 
 const OPENAI_CONFIG = {
     // Tu API Key de OpenAI - Obténla en: https://platform.openai.com/api-keys
-    apiKey: 'TU_API_KEY_AQUI',
+    // Puedes usar variables de entorno o configurar directamente aquí
+    apiKey: process.env.OPENAI_API_KEY || 'TU_API_KEY_AQUI',
     
     // Modelo a usar (recomendado: gpt-4o-mini para mejor precio/rendimiento)
-    model: 'gpt-4o-mini',
+    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
     
     // Máximo de tokens por respuesta (ajusta según necesites)
-    maxTokens: 500,
+    maxTokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 500,
     
     // Temperatura para creatividad (0.0 = muy determinístico, 1.0 = muy creativo)
-    temperature: 0.7,
+    temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7,
     
     // URL base de la API (no cambiar a menos que uses un proxy)
     baseURL: 'https://api.openai.com/v1'
