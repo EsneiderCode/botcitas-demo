@@ -1,6 +1,9 @@
 // Configuración de ElevenLabs para generar audio del bot
 // IMPORTANTE: Reemplaza estos valores con tus credenciales reales
 
+// Cargar variables de entorno desde .env
+require('dotenv').config();
+
 const ELEVENLABS_CONFIG = {
     // Tu API Key de ElevenLabs - Obténla en: https://elevenlabs.io/app/settings/api-keys
     // Puedes usar variables de entorno o configurar directamente aquí

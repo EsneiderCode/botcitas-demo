@@ -1,6 +1,9 @@
 // Configuración de OpenAI para el bot de WhatsApp
 // IMPORTANTE: Reemplaza estos valores con tus credenciales reales
 
+// Cargar variables de entorno desde .env
+require('dotenv').config();
+
 const OPENAI_CONFIG = {
     // Tu API Key de OpenAI - Obténla en: https://platform.openai.com/api-keys
     // Puedes usar variables de entorno o configurar directamente aquí
