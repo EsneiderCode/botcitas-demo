@@ -31,6 +31,28 @@ Bot automatizado de WhatsApp Business para agendación de citas de instalación 
 - **Socket.IO** - Comunicación en tiempo real
 - **HTML/CSS/JS** - Interfaz del simulador
 
+## ⚠️ IMPORTANTE - Configuración de API Keys
+
+**🔐 SEGURIDAD CRÍTICA:** Este repositorio contiene placeholders para API Keys. **NUNCA** pongas tus API Keys reales en un repositorio público.
+
+### Para usar el bot con funcionalidades completas:
+
+1. **Configura OpenAI** (para chat inteligente):
+   - Ve a [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+   - Crea una API Key
+   - Edita `config-openai.js` y reemplaza `'TU_API_KEY_AQUI'` con tu API Key real
+
+2. **Configura ElevenLabs** (para mensajes de voz):
+   - Ve a [https://elevenlabs.io/app/settings/api-keys](https://elevenlabs.io/app/settings/api-keys)
+   - Crea una API Key
+   - Edita `config-elevenlabs.js` y reemplaza `'TU_ELEVENLABS_API_KEY_AQUI'` con tu API Key real
+
+3. **Ejecuta localmente** (no en GitHub Pages):
+   ```bash
+   python3 -m http.server 8000
+   # O usa: ./start-server.sh
+   ```
+
 ## 📦 Instalación
 
 1. **Clona el repositorio:**
