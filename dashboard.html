@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard Analytics - CLARITY Glasfaser Termin-Management</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .dashboard-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    .dashboard-header {
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    
+    .dashboard-header h1 {
+      margin: 0 0 8px;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dashboard-header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+    /* Controles del dashboard */
+    .dashboard-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      background: var(--card);
+      padding: 16px 24px;
+      border-radius: 16px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .time-filters {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .time-filter-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid #2c4a5e;
+      background: #173140;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .time-filter-btn:hover {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.1);
+    }
+    
+    .time-filter-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    .refresh-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .language-selector {
+      display: flex;
+      gap: 4px;
+    }
+
+    .lang-btn {
+      padding: 6px 8px;
+      border: 2px solid #2c4a5e;
+      background: #173140;
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn:hover {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .lang-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+    
+    .refresh-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      background: linear-gradient(135deg, #13ce66, #16a34a);
+      color: #04131c;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+    }
+    
+    .auto-refresh {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    
+    /* KPI Cards mejoradas */
+    .kpi-section {
+      margin-bottom: 32px;
+    }
+    
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .kpi-card {
+      background: linear-gradient(135deg, var(--card), #1a3540);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid #2c4a5e;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+    }
+    
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+    }
+    
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    
+    .kpi-title {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .kpi-value {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    
+    .kpi-trend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .trend-up {
+      color: #22c55e;
+    }
+    
+    .trend-down {
+      color: #ef4444;
+    }
+    
+    .trend-neutral {
+      color: var(--muted);
+    }
+    
+    .kpi-subtitle {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+    
+    /* Chart containers */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .chart-container {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 1px solid #2c4a5e;
+      min-height: 400px;
+      position: relative;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+    
+    .chart-options {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .chart-option-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #2c4a5e;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    
+    .chart-option-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    canvas {
+      background: transparent !important;
+      border-radius: 12px;
+      max-height: 320px !important;
+    }
+    
+    
+    /* Live indicators */
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #22c55e;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 16px;
+      }
+      
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .time-filters {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .kpi-value {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Colores específicos para KPIs */
+    .kpi-conversion .kpi-icon {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+    
+    .kpi-revenue .kpi-icon {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    .kpi-satisfaction .kpi-icon {
+      background: rgba(168, 85, 247, 0.1);
+      color: #a855f7;
+    }
+    
+    .kpi-efficiency .kpi-icon {
+      background: rgba(6, 182, 212, 0.1);
+      color: #06b6d4;
+    }
+    
+    .kpi-technicians .kpi-icon {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    /* Vista previa financiera */
+    .financial-preview {
+      background: #0f1b23;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .financial-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #2c4a5e;
+    }
+    
+    .financial-item:last-child {
+      border-bottom: none;
+    }
+    
+    .financial-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    .financial-value {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .financial-value.positive {
+      color: #22c55e;
+    }
+    
+    .financial-link {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #451a03;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .financial-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    }
+    
+    /* Sección informativa */
+    .info-section {
+      margin-bottom: 32px;
+    }
+    
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+    }
+    
+    .info-card {
+      background: linear-gradient(135deg, var(--card), #1a3540);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 1px solid #2c4a5e;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .info-card h3 {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .info-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    .formula {
+      background: #0f1b23;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 12px 0;
+      border-left: 3px solid #3b82f6;
+    }
+    
+    .formula code {
+      color: #7dd3fc;
+      font-weight: 600;
+    }
+    
+    .info-card ul {
+      color: var(--muted);
+      padding-left: 20px;
+    }
+    
+    .info-card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    
+    .value-breakdown {
+      background: #0f1b23;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .value-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #2c4a5e;
+    }
+    
+    .value-item:last-child {
+      border-bottom: none;
+    }
+    
+    .value-item.total {
+      border-top: 2px solid #3b82f6;
+      padding-top: 12px;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    
+    .value-label {
+      color: var(--muted);
+    }
+    
+    .value-amount {
+      color: var(--text);
+      font-weight: 600;
+    }
+    
+    .value-item.total .value-label,
+    .value-item.total .value-amount {
+      color: #3b82f6;
+      font-size: 1.1rem;
+    }
+    
+    .value-note {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 16px;
+      border-left: 3px solid #22c55e;
+    }
+    
+    /* Tooltips */
+    [title] {
+      position: relative;
+      cursor: help;
+    }
+  </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="page with-navbar">
+  <nav class="navbar">
+    <a href="./index.html" class="navbar-brand">
+      📊 Bot de Citas CLARITY
+    </a>
+    <div class="navbar-nav">
+      <a href="./index.html" class="nav-link">Inicio</a>
+      <a href="./conversations.html" class="nav-link">Demo</a>
+      <a href="./manager.html" class="nav-link">Gestor</a>
+      <a href="./dashboard.html" class="nav-link active">Dashboard</a>
+      <a href="./settings.html" class="nav-link">Config</a>
+    </div>
+  </nav>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1>📊 Dashboard Analytics</h1>
+      <p>Métricas en tiempo real y análisis de rendimiento</p>
+    </div>
+    
+    <div class="dashboard-controls">
+      <div class="time-filters">
+        <button class="time-filter-btn active" data-period="today">🗓️ Hoy</button>
+        <button class="time-filter-btn" data-period="week">📅 Esta semana</button>
+        <button class="time-filter-btn" data-period="month">📊 Este mes</button>
+        <button class="time-filter-btn" data-period="quarter">📈 Trimestre</button>
+        <button class="time-filter-btn" data-period="year">📋 Año</button>
+      </div>
+      
+      <div class="refresh-controls">
+        <div class="language-selector">
+          <button class="lang-btn" data-lang="de">🇩🇪</button>
+          <button class="lang-btn" data-lang="es">🇪🇸</button>
+          <button class="lang-btn" data-lang="en">🇺🇸</button>
+        </div>
+        <div class="auto-refresh">
+          <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span id="liveText">En vivo</span>
+          </div>
+        </div>
+        <a href="./financial-dashboard.html" class="refresh-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;" id="financialBtn">💰 Finanz-Dashboard</a>
+        <button class="refresh-btn" id="refreshBtn">🔄 Actualizar</button>
+      </div>
+    </div>
+    
+    <div class="kpi-section">
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-conversion">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-conversion-title">Conversion Rate</h3>
+              <div class="kpi-value" id="kpi-conversion">89.7%</div>
+              <div class="kpi-trend trend-up" id="kpi-conversion-trend">
+                ↗️ +3.2% vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-conversion-subtitle">Bestätigte Termine vs Kontakte</div>
+            </div>
+            <div class="kpi-icon">📈</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-technicians">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-utilization-title">Techniker Auslastung</h3>
+              <div class="kpi-value" id="kpi-technician-utilization">93.1%</div>
+              <div class="kpi-trend trend-up" id="kpi-utilization-trend">
+                ↗️ +5.7% vs Vorwoche
+              </div>
+              <div class="kpi-subtitle" id="kpi-utilization-subtitle">Durchschnittliche Ressourcennutzung</div>
+            </div>
+            <div class="kpi-icon">👥</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-efficiency">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-time-title">Durchschnittliche Zeit</h3>
+              <div class="kpi-value" id="kpi-time">1h 23m</div>
+              <div class="kpi-trend trend-down" id="kpi-time-trend">
+                ↘️ -24min vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-time-subtitle">Erstkontakt bis Terminbestätigung</div>
+            </div>
+            <div class="kpi-icon">⏱️</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-satisfaction">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-satisfaction-title">Kundenzufriedenheit</h3>
+              <div class="kpi-value" id="kpi-satisfaction">4.9/5</div>
+              <div class="kpi-trend trend-up" id="kpi-satisfaction-trend">
+                ↗️ +0.3 vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-satisfaction-subtitle">Durchschnittliche Bewertung nach Service</div>
+            </div>
+            <div class="kpi-icon">⭐</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-completed-title">Abgeschlossene Termine</h3>
+              <div class="kpi-value" id="kpi-completed">1,847</div>
+              <div class="kpi-trend trend-up" id="kpi-completed-trend">
+                ↗️ +613 vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-completed-subtitle">Gesamt im Berichtszeitraum</div>
+            </div>
+            <div class="kpi-icon">✅</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-cancel-title">Stornierungsrate</h3>
+              <div class="kpi-value" id="kpi-cancel">2.1%</div>
+              <div class="kpi-trend trend-down" id="kpi-cancel-trend">
+                ↘️ -1.1% vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-cancel-subtitle">Stornierungen / Gesamte Termine</div>
+            </div>
+            <div class="kpi-icon">❌</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-technicians-title">Aktive Techniker</h3>
+              <div class="kpi-value" id="kpi-technicians">16</div>
+              <div class="kpi-trend trend-up" id="kpi-technicians-trend">
+                ↗️ +4 neue Techniker
+              </div>
+              <div class="kpi-subtitle" id="kpi-technicians-subtitle">Derzeit verfügbar</div>
+            </div>
+            <div class="kpi-icon">👥</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <div>
+              <h3 class="kpi-title" id="kpi-efficiency-title">Service Effizienz</h3>
+              <div class="kpi-value" id="kpi-service-efficiency">96.8%</div>
+              <div class="kpi-trend trend-up" id="kpi-efficiency-trend">
+                ↗️ +2.6% vs Vormonat
+              </div>
+              <div class="kpi-subtitle" id="kpi-efficiency-subtitle">Erfolgreiche Glasfaser Installationen</div>
+            </div>
+            <div class="kpi-icon">🏆</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="charts-grid">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">📈 Conversions nach Kanal</h3>
+          <div class="chart-options">
+            <button class="chart-option-btn active">Wöchentlich</button>
+            <button class="chart-option-btn">Monatlich</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chartConversions"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">⚡ Techniker Performance</h3>
+          <div class="chart-options">
+            <button class="chart-option-btn active">Auslastung</button>
+            <button class="chart-option-btn">Effizienz</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chartTechnicians"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">🕐 Peak-Zeiten Analyse</h3>
+          <div class="chart-options">
+            <button class="chart-option-btn active">Heute</button>
+            <button class="chart-option-btn">Durchschnitt</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chartSchedule"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">⭐ Kundenzufriedenheit</h3>
+          <div class="chart-options">
+            <button class="chart-option-btn active">Distribución</button>
+            <button class="chart-option-btn">Tendencia</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chartSatisfaction"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title">🗺️ Geografische Abdeckung</h3>
+          <div class="chart-options">
+            <button class="chart-option-btn active">Ciudades</button>
+            <button class="chart-option-btn">Regiones</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="chartGeography"></canvas>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Sección explicativa -->
+    <div class="info-section">
+    </div>
+    
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Estado global del dashboard
+      let currentPeriod = 'today';
+      let charts = {};
+      let refreshInterval;
+      
+      // Configuración global de Chart.js
+      Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+      Chart.defaults.font.size = 12;
+      Chart.defaults.color = '#a9c0cf';
+      Chart.defaults.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+      Chart.defaults.borderColor = '#2c4a5e';
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = false;
+      
+      // Datos simulados (en producción vendrían de una API)
+      const dashboardData = {
+        today: {
+          kpis: {
+            conversion: 87.3,
+            technicianUtilization: 87.4,
+            time: '1h 47m',
+            satisfaction: 4.8,
+            completed: 1234,
+            cancel: 3.2,
+            technicians: 12,
+            serviceEfficiency: 94.2
+          },
+          trends: {
+            conversion: { value: 5.2, direction: 'up' },
+            technicianUtilization: { value: 3.2, direction: 'up' },
+            time: { value: -18, direction: 'down', unit: 'min' },
+            satisfaction: { value: 0.3, direction: 'up' },
+            completed: { value: 156, direction: 'up' },
+            cancel: { value: -1.1, direction: 'down' },
+            technicians: { value: 0, direction: 'neutral' },
+            serviceEfficiency: { value: 2.1, direction: 'up' }
+          }
+        }
+      };
+      
+      // Inicializar dashboard
+      function initDashboard() {
+        setupTimeFilters();
+        setupRefreshControls();
+        updateKPIs();
+        initializeCharts();
+        startAutoRefresh();
+      }
+      
+      // Configurar filtros de tiempo
+      function setupTimeFilters() {
+        document.querySelectorAll('.time-filter-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentPeriod = this.dataset.period;
+            updateDashboard();
+          });
+        });
+      }
+      
+      // Configurar controles de actualización
+      function setupRefreshControls() {
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+          this.innerHTML = '🔄 Actualizando...';
+          this.disabled = true;
+          
+          setTimeout(() => {
+            updateDashboard();
+            this.innerHTML = '🔄 Actualizar';
+            this.disabled = false;
+          }, 1000);
+        });
+      }
+      
+      // Actualizar KPIs
+      function updateKPIs() {
+        const data = dashboardData[currentPeriod] || dashboardData.today;
+        const kpis = data.kpis;
+        const trends = data.trends;
+        
+        // Actualizar valores
+        document.getElementById('kpi-conversion').textContent = kpis.conversion + '%';
+        document.getElementById('kpi-technician-utilization').textContent = kpis.technicianUtilization + '%';
+        document.getElementById('kpi-time').textContent = kpis.time;
+        document.getElementById('kpi-satisfaction').textContent = kpis.satisfaction + '/5';
+        document.getElementById('kpi-completed').textContent = kpis.completed.toLocaleString();
+        document.getElementById('kpi-cancel').textContent = kpis.cancel + '%';
+        document.getElementById('kpi-technicians').textContent = kpis.technicians;
+        document.getElementById('kpi-service-efficiency').textContent = kpis.serviceEfficiency + '%';
+        
+        // Actualizar tendencias
+        updateTrends(trends);
+      }
+      
+      // Actualizar tendencias
+      function updateTrends(trends) {
+        // Mapeo de claves del objeto trends a IDs reales de los elementos
+        const keyMapping = {
+          'technicianUtilization': 'kpi-technician-utilization',
+          'serviceEfficiency': 'kpi-service-efficiency',
+          'conversion': 'kpi-conversion',
+          'time': 'kpi-time',
+          'satisfaction': 'kpi-satisfaction',
+          'completed': 'kpi-completed',
+          'cancel': 'kpi-cancel',
+          'technicians': 'kpi-technicians'
+        };
+        
+        Object.keys(trends).forEach(key => {
+          const trend = trends[key];
+          const elementId = keyMapping[key] || `kpi-${key}`;
+          const kpiElement = document.getElementById(elementId);
+          
+          if (!kpiElement) {
+            console.warn(`Element with ID ${elementId} not found`);
+            return;
+          }
+          
+          const trendElement = kpiElement.parentElement.querySelector('.kpi-trend');
+          if (trendElement) {
+            let arrow, sign, unit;
+            
+            if (trend.direction === 'up') {
+              arrow = '↗️';
+              sign = '+';
+              trendElement.className = 'kpi-trend trend-up';
+            } else if (trend.direction === 'down') {
+              arrow = '↘️';
+              sign = trend.value > 0 ? '-' : '';
+              trendElement.className = 'kpi-trend trend-down';
+            } else {
+              arrow = '➡️';
+              sign = '';
+              trendElement.className = 'kpi-trend trend-neutral';
+            }
+            
+            unit = trend.unit || '%';
+            const value = Math.abs(trend.value);
+            
+            if (trend.direction === 'neutral') {
+              trendElement.innerHTML = `${arrow} Sin cambios`;
+            } else {
+              trendElement.innerHTML = `${arrow} ${sign}${value}${unit} vs mes anterior`;
+            }
+          }
+        });
+      }
+      
+      // Inicializar gráficos
+      function initializeCharts() {
+        // Gráfico de conversiones por canal
+        charts.conversions = new Chart(document.getElementById('chartConversions').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['WhatsApp', 'Web', 'Telefon', 'Email', 'Weiterempfehlungen'],
+            datasets: [{
+              data: [45, 25, 15, 10, 5],
+              backgroundColor: [
+                '#22c55e',
+                '#3b82f6', 
+                '#f59e0b',
+                '#8b5cf6',
+                '#06b6d4'
+              ],
+              borderWidth: 2,
+              borderColor: '#162733',
+              hoverBorderWidth: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  padding: 15,
+                  color: '#a9c0cf',
+                  font: {
+                    size: 12
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: '#0f1b23',
+                titleColor: '#e9f1f6',
+                bodyColor: '#a9c0cf',
+                borderColor: '#2c4a5e',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    return context.label + ': ' + context.parsed + '% de conversiones';
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+        
+        // Deutsche Techniker Performance
+        charts.technicians = new Chart(document.getElementById('chartTechnicians').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Klaus M.', 'Petra S.', 'Andreas F.', 'Sabine W.', 'Jürgen K.', 'Ute R.'],
+            datasets: [{
+              label: 'Auslastung (%)',
+              data: [92, 87, 95, 78, 89, 84],
+              backgroundColor: function(context) {
+                const value = context.parsed.y;
+                if (value >= 90) return 'rgba(34, 197, 94, 0.8)';
+                if (value >= 80) return 'rgba(245, 158, 11, 0.8)';
+                return 'rgba(239, 68, 68, 0.8)';
+              },
+              borderColor: function(context) {
+                const value = context.parsed.y;
+                if (value >= 90) return '#22c55e';
+                if (value >= 80) return '#f59e0b';
+                return '#ef4444';
+              },
+              borderWidth: 2,
+              borderRadius: 6,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#0f1b23',
+                titleColor: '#e9f1f6',
+                bodyColor: '#a9c0cf',
+                borderColor: '#2c4a5e',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    const status = context.parsed.y >= 90 ? 'Excelente' : context.parsed.y >= 80 ? 'Bueno' : 'Necesita mejora';
+                    return context.label + ': ' + context.parsed.y + '% (' + status + ')';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  callback: function(value) {
+                    return value + '%';
+                  },
+                  color: '#a9c0cf'
+                },
+                grid: {
+                  color: 'rgba(44, 74, 94, 0.3)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#a9c0cf'
+                },
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+        
+        // Gráfico de horarios peak
+        charts.schedule = new Chart(document.getElementById('chartSchedule').getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h'],
+            datasets: [{
+              label: 'Geplante Termine',
+              data: [5, 12, 18, 25, 32, 28, 35, 42, 38, 30, 15],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4,
+              pointHoverRadius: 8,
+              pointBackgroundColor: '#3b82f6',
+              pointBorderColor: '#162733',
+              pointBorderWidth: 2,
+              borderWidth: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#0f1b23',
+                titleColor: '#e9f1f6',
+                bodyColor: '#a9c0cf',
+                borderColor: '#2c4a5e',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    return 'Hora ' + context.label + ': ' + context.parsed.y + ' citas programadas';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#a9c0cf',
+                  callback: function(value) {
+                    return value + ' citas';
+                  }
+                },
+                grid: {
+                  color: 'rgba(44, 74, 94, 0.3)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#a9c0cf'
+                },
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+        
+        // Gráfico de satisfacción
+        charts.satisfaction = new Chart(document.getElementById('chartSatisfaction').getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['1⭐', '2⭐', '3⭐', '4⭐', '5⭐'],
+            datasets: [{
+              label: 'Número de calificaciones',
+              data: [8, 15, 45, 156, 234],
+              backgroundColor: [
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(245, 158, 11, 0.8)', 
+                'rgba(107, 114, 128, 0.8)',
+                'rgba(59, 130, 246, 0.8)',
+                'rgba(34, 197, 94, 0.8)'
+              ],
+              borderColor: [
+                '#ef4444',
+                '#f59e0b', 
+                '#6b7280',
+                '#3b82f6',
+                '#22c55e'
+              ],
+              borderWidth: 2,
+              borderRadius: 6,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#0f1b23',
+                titleColor: '#e9f1f6',
+                bodyColor: '#a9c0cf',
+                borderColor: '#2c4a5e',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((context.parsed.y * 100) / total).toFixed(1);
+                    return context.parsed.y + ' calificaciones (' + percentage + '%)';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#a9c0cf',
+                  callback: function(value) {
+                    return value + ' calif.';
+                  }
+                },
+                grid: {
+                  color: 'rgba(44, 74, 94, 0.3)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#a9c0cf'
+                },
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+        
+        // Deutsche Städte Verteilung
+        charts.geography = new Chart(document.getElementById('chartGeography').getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt', 'Stuttgart'],
+            datasets: [{
+              data: [32, 28, 18, 15, 12, 8],
+              backgroundColor: [
+                'rgba(34, 197, 94, 0.8)',
+                'rgba(59, 130, 246, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(139, 92, 246, 0.8)',
+                'rgba(6, 182, 212, 0.8)',
+                'rgba(236, 72, 153, 0.8)'
+              ],
+              borderColor: '#162733',
+              borderWidth: 2,
+              hoverBorderWidth: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  padding: 15,
+                  color: '#a9c0cf',
+                  font: {
+                    size: 11
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: '#0f1b23',
+                titleColor: '#e9f1f6',
+                bodyColor: '#a9c0cf',
+                borderColor: '#2c4a5e',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((context.parsed * 100) / total).toFixed(1);
+                    return context.label + ': ' + context.parsed + ' Termine (' + percentage + '%)';
+                  }
+                }
+              }
+            }
+          }
+        });
+        
+        setupChartInteractions();
+      }
+      
+      // Configurar interacciones de gráficos
+      function setupChartInteractions() {
+        document.querySelectorAll('.chart-option-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const container = this.closest('.chart-container');
+            container.querySelectorAll('.chart-option-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Aquí se actualizaría el gráfico según la opción seleccionada
+            // En este ejemplo solo cambiamos el estilo visual
+            const chartCanvas = container.querySelector('canvas');
+            chartCanvas.style.opacity = '0.7';
+            setTimeout(() => {
+              chartCanvas.style.opacity = '1';
+            }, 200);
+          });
+        });
+      }
+      
+      
+      // Actualizar todo el dashboard
+      function updateDashboard() {
+        updateKPIs();
+        
+        // Simular actualización de gráficos con nuevos datos
+        Object.values(charts).forEach(chart => {
+          if (chart && chart.update) {
+            chart.update('active');
+          }
+        });
+      }
+      
+      // Auto-refresh cada 30 segundos
+      function startAutoRefresh() {
+        refreshInterval = setInterval(() => {
+          updateDashboard();
+        }, 30000);
+      }
+      
+      // Sistema de idiomas
+      const translations = {
+        de: {
+          dashboardTitle: '📊 Dashboard Analytics',
+          dashboardSubtitle: 'Echtzeitmetriken und Leistungsanalyse',
+          today: '🗓️ Heute',
+          thisWeek: '📅 Diese Woche', 
+          thisMonth: '📊 Diesen Monat',
+          quarter: '📈 Quartal',
+          year: '📋 Jahr',
+          liveText: 'Live',
+          financialBtn: '💰 Finanz-Dashboard',
+          refreshBtn: '🔄 Aktualisieren',
+          // KPI Translations
+          kpiConversionTitle: 'Conversion Rate',
+          kpiConversionTrend: '↗️ +3.2% vs Vormonat',
+          kpiConversionSubtitle: 'Bestätigte Termine vs Kontakte',
+          kpiUtilizationTitle: 'Techniker Auslastung',
+          kpiUtilizationTrend: '↗️ +5.7% vs Vorwoche',
+          kpiUtilizationSubtitle: 'Durchschnittliche Ressourcennutzung',
+          kpiTimeTitle: 'Durchschnittliche Zeit',
+          kpiTimeTrend: '↘️ -24min vs Vormonat',
+          kpiTimeSubtitle: 'Erstkontakt bis Terminbestätigung',
+          kpiSatisfactionTitle: 'Kundenzufriedenheit',
+          kpiSatisfactionTrend: '↗️ +0.3 vs Vormonat',
+          kpiSatisfactionSubtitle: 'Durchschnittliche Bewertung nach Service',
+          kpiCompletedTitle: 'Abgeschlossene Termine',
+          kpiCompletedTrend: '↗️ +613 vs Vormonat',
+          kpiCompletedSubtitle: 'Gesamt im Berichtszeitraum',
+          kpiCancelTitle: 'Stornierungsrate',
+          kpiCancelTrend: '↘️ -1.1% vs Vormonat',
+          kpiCancelSubtitle: 'Stornierungen / Gesamte Termine',
+          kpiTechniciansTitle: 'Aktive Techniker',
+          kpiTechniciansTrend: '↗️ +4 neue Techniker',
+          kpiTechniciansSubtitle: 'Derzeit verfügbar',
+          kpiEfficiencyTitle: 'Service Effizienz',
+          kpiEfficiencyTrend: '↗️ +2.6% vs Vormonat',
+          kpiEfficiencySubtitle: 'Erfolgreiche Glasfaser Installationen'
+        },
+        es: {
+          dashboardTitle: '📊 Dashboard Analytics',
+          dashboardSubtitle: 'Métricas en tiempo real y análisis de rendimiento', 
+          today: '🗓️ Hoy',
+          thisWeek: '📅 Esta semana',
+          thisMonth: '📊 Este mes', 
+          quarter: '📈 Trimestre',
+          year: '📋 Año',
+          liveText: 'En vivo',
+          financialBtn: '💰 Dashboard Financiero',
+          refreshBtn: '🔄 Actualizar',
+          // KPI Translations
+          kpiConversionTitle: 'Tasa de Conversión',
+          kpiConversionTrend: '↗️ +3.2% vs mes anterior',
+          kpiConversionSubtitle: 'Citas confirmadas vs contactos',
+          kpiUtilizationTitle: 'Utilización Técnicos',
+          kpiUtilizationTrend: '↗️ +5.7% vs semana anterior',
+          kpiUtilizationSubtitle: 'Uso promedio de recursos',
+          kpiTimeTitle: 'Tiempo Promedio',
+          kpiTimeTrend: '↘️ -24min vs mes anterior',
+          kpiTimeSubtitle: 'Primer contacto a confirmación',
+          kpiSatisfactionTitle: 'Satisfacción Cliente',
+          kpiSatisfactionTrend: '↗️ +0.3 vs mes anterior',
+          kpiSatisfactionSubtitle: 'Evaluación promedio post-servicio',
+          kpiCompletedTitle: 'Citas Completadas',
+          kpiCompletedTrend: '↗️ +613 vs mes anterior',
+          kpiCompletedSubtitle: 'Total en período de reporte',
+          kpiCancelTitle: 'Tasa de Cancelación',
+          kpiCancelTrend: '↘️ -1.1% vs mes anterior',
+          kpiCancelSubtitle: 'Cancelaciones / Total citas',
+          kpiTechniciansTitle: 'Técnicos Activos',
+          kpiTechniciansTrend: '↗️ +4 técnicos nuevos',
+          kpiTechniciansSubtitle: 'Actualmente disponibles',
+          kpiEfficiencyTitle: 'Eficiencia de Servicio',
+          kpiEfficiencyTrend: '↗️ +2.6% vs mes anterior',
+          kpiEfficiencySubtitle: 'Instalaciones fibra exitosas'
+        },
+        en: {
+          dashboardTitle: '📊 Dashboard Analytics',
+          dashboardSubtitle: 'Real-time metrics and performance analysis',
+          today: '🗓️ Today',
+          thisWeek: '📅 This Week',
+          thisMonth: '📊 This Month',
+          quarter: '📈 Quarter', 
+          year: '📋 Year',
+          liveText: 'Live',
+          financialBtn: '💰 Financial Dashboard',
+          refreshBtn: '🔄 Refresh',
+          // KPI Translations
+          kpiConversionTitle: 'Conversion Rate',
+          kpiConversionTrend: '↗️ +3.2% vs last month',
+          kpiConversionSubtitle: 'Confirmed appointments vs contacts',
+          kpiUtilizationTitle: 'Technician Utilization',
+          kpiUtilizationTrend: '↗️ +5.7% vs last week',
+          kpiUtilizationSubtitle: 'Average resource usage',
+          kpiTimeTitle: 'Average Time',
+          kpiTimeTrend: '↘️ -24min vs last month',
+          kpiTimeSubtitle: 'First contact to confirmation',
+          kpiSatisfactionTitle: 'Customer Satisfaction',
+          kpiSatisfactionTrend: '↗️ +0.3 vs last month',
+          kpiSatisfactionSubtitle: 'Average rating after service',
+          kpiCompletedTitle: 'Completed Appointments',
+          kpiCompletedTrend: '↗️ +613 vs last month',
+          kpiCompletedSubtitle: 'Total in reporting period',
+          kpiCancelTitle: 'Cancellation Rate',
+          kpiCancelTrend: '↘️ -1.1% vs last month',
+          kpiCancelSubtitle: 'Cancellations / Total appointments',
+          kpiTechniciansTitle: 'Active Technicians',
+          kpiTechniciansTrend: '↗️ +4 new technicians',
+          kpiTechniciansSubtitle: 'Currently available',
+          kpiEfficiencyTitle: 'Service Efficiency',
+          kpiEfficiencyTrend: '↗️ +2.6% vs last month',
+          kpiEfficiencySubtitle: 'Successful fiber installations'
+        }
+      };
+
+      function updateDashboardLanguage(lang) {
+        const texts = translations[lang];
+        if (!texts) return;
+
+        // Actualizar elementos específicos del dashboard
+        const titleEl = document.querySelector('.dashboard-header h1');
+        const subtitleEl = document.querySelector('.dashboard-header p');
+        const liveTextEl = document.getElementById('liveText');
+        const financialBtnEl = document.getElementById('financialBtn');
+        const refreshBtnEl = document.getElementById('refreshBtn');
+
+        if (titleEl) titleEl.textContent = texts.dashboardTitle;
+        if (subtitleEl) subtitleEl.textContent = texts.dashboardSubtitle;
+        if (liveTextEl) liveTextEl.textContent = texts.liveText;
+        if (financialBtnEl) financialBtnEl.textContent = texts.financialBtn;
+        if (refreshBtnEl) refreshBtnEl.textContent = texts.refreshBtn;
+
+        // Actualizar botones de tiempo
+        const timeButtons = document.querySelectorAll('.time-filter-btn');
+        const timeTexts = [texts.today, texts.thisWeek, texts.thisMonth, texts.quarter, texts.year];
+        timeButtons.forEach((btn, index) => {
+          if (timeTexts[index]) {
+            btn.textContent = timeTexts[index];
+          }
+        });
+        
+        // Actualizar KPIs
+        const kpiElements = [
+          { title: 'kpi-conversion-title', trend: 'kpi-conversion-trend', subtitle: 'kpi-conversion-subtitle', 
+            titleText: 'kpiConversionTitle', trendText: 'kpiConversionTrend', subtitleText: 'kpiConversionSubtitle' },
+          { title: 'kpi-utilization-title', trend: 'kpi-utilization-trend', subtitle: 'kpi-utilization-subtitle', 
+            titleText: 'kpiUtilizationTitle', trendText: 'kpiUtilizationTrend', subtitleText: 'kpiUtilizationSubtitle' },
+          { title: 'kpi-time-title', trend: 'kpi-time-trend', subtitle: 'kpi-time-subtitle', 
+            titleText: 'kpiTimeTitle', trendText: 'kpiTimeTrend', subtitleText: 'kpiTimeSubtitle' },
+          { title: 'kpi-satisfaction-title', trend: 'kpi-satisfaction-trend', subtitle: 'kpi-satisfaction-subtitle', 
+            titleText: 'kpiSatisfactionTitle', trendText: 'kpiSatisfactionTrend', subtitleText: 'kpiSatisfactionSubtitle' },
+          { title: 'kpi-completed-title', trend: 'kpi-completed-trend', subtitle: 'kpi-completed-subtitle', 
+            titleText: 'kpiCompletedTitle', trendText: 'kpiCompletedTrend', subtitleText: 'kpiCompletedSubtitle' },
+          { title: 'kpi-cancel-title', trend: 'kpi-cancel-trend', subtitle: 'kpi-cancel-subtitle', 
+            titleText: 'kpiCancelTitle', trendText: 'kpiCancelTrend', subtitleText: 'kpiCancelSubtitle' },
+          { title: 'kpi-technicians-title', trend: 'kpi-technicians-trend', subtitle: 'kpi-technicians-subtitle', 
+            titleText: 'kpiTechniciansTitle', trendText: 'kpiTechniciansTrend', subtitleText: 'kpiTechniciansSubtitle' },
+          { title: 'kpi-efficiency-title', trend: 'kpi-efficiency-trend', subtitle: 'kpi-efficiency-subtitle', 
+            titleText: 'kpiEfficiencyTitle', trendText: 'kpiEfficiencyTrend', subtitleText: 'kpiEfficiencySubtitle' }
+        ];
+        
+        kpiElements.forEach(kpi => {
+          const titleEl = document.getElementById(kpi.title);
+          const trendEl = document.getElementById(kpi.trend);
+          const subtitleEl = document.getElementById(kpi.subtitle);
+          
+          if (titleEl && texts[kpi.titleText]) titleEl.textContent = texts[kpi.titleText];
+          if (trendEl && texts[kpi.trendText]) trendEl.textContent = texts[kpi.trendText];
+          if (subtitleEl && texts[kpi.subtitleText]) subtitleEl.textContent = texts[kpi.subtitleText];
+        });
+      }
+
+      // Manejar selector de idiomas
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const currentLang = localStorage.getItem('clarity_language') || 'de';
+      
+      // Cargar idioma guardado
+      updateDashboardLanguage(currentLang);
+      
+      // Marcar botón activo
+      langButtons.forEach(btn => {
+        if (btn.dataset.lang === currentLang) {
+          btn.classList.add('active');
+        }
+      });
+      
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // Actualizar botones activos
+          langButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Cambiar textos
+          updateDashboardLanguage(lang);
+          
+          // Guardar preferencia
+          localStorage.setItem('clarity_language', lang);
+        });
+      });
+
+      // Limpiar intervalos al salir
+      window.addEventListener('beforeunload', function() {
+        if (refreshInterval) {
+          clearInterval(refreshInterval);
+        }
+      });
+      
+      // Inicializar dashboard
+      initDashboard();
+    });
+  </script>
+</body>
+</html>

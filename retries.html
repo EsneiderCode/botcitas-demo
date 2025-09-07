@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flujo de Reintentos</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .retries-container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
+    .retries-container h1 { margin-bottom: 20px; }
+    .attempt { background: var(--card); padding: 14px; border-radius: 10px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+    .attempt h2 { margin-top: 0; font-size: 1.2rem; color: var(--muted); }
+    .attempt p { margin: 8px 0 0; }
+    .next-btn { background: #173140; color: var(--text); border: 1px solid #2c4a5e; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+    .next-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body class="page">
+  <a class="back" href="./index-scenarios.html">Panel Principal</a>
+  <div class="retries-container">
+    <h1>Flujo de Reintentos</h1>
+    <div id="attemptView"></div>
+    <button id="btnNext" class="next-btn">Siguiente intento ▶️</button>
+  </div>
+
+  <script>
+    (function(){
+      const attemptView = document.getElementById('attemptView');
+      const btnNext = document.getElementById('btnNext');
+      // Obtiene configuración de reintentos (default 5)
+      const retryCount = parseInt(localStorage.getItem('bot_retry_count') || '5', 10);
+      // Mensajes de ejemplo por intento
+      const messages = [];
+      for (let i = 1; i <= retryCount; i++) {
+        messages.push(`Este es el intento ${i}/${retryCount}. No hemos recibido respuesta. Por favor confirma tu cita o contáctanos para cualquier duda.`);
+      }
+      let current = 0;
+
+      function renderAttempt() {
+        attemptView.innerHTML = '';
+        if (current < retryCount) {
+          const div = document.createElement('div');
+          div.className = 'attempt';
+          div.innerHTML = `<h2>Intento ${current+1} de ${retryCount}</h2><p>${messages[current]}</p>`;
+          attemptView.appendChild(div);
+          btnNext.textContent = (current < retryCount - 1) ? 'Siguiente intento ▶️' : 'Escalar a humano';
+        } else {
+          const div = document.createElement('div');
+          div.className = 'attempt';
+          div.innerHTML = '<h2>Escalado a humano</h2><p>Se ha escalado el caso a un agente humano para seguimiento.</p>';
+          attemptView.appendChild(div);
+          btnNext.disabled = true;
+        }
+      }
+      btnNext.addEventListener('click', () => {
+        current++;
+        renderAttempt();
+      });
+      // Inicial
+      renderAttempt();
+    })();
+  </script>
+</body>
+</html>
