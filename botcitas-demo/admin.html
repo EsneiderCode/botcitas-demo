@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo - Bot de Citas CLARITY</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #2c4a5e;
+    }
+
+    .admin-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .system-status {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .status-online {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid #22c55e;
+    }
+
+    .status-offline {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .stats-panel {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .stats-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .stats-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .refresh-btn {
+      background: #173140;
+      color: var(--text);
+      border: 1px solid #2c4a5e;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: background 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: #1f445f;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background: #173140;
+      border-radius: 12px;
+      border: 1px solid #2c4a5e;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .activity-feed {
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #2c4a5e;
+      border-radius: 12px;
+      background: #111d26;
+    }
+
+    .activity-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #2c4a5e;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.conversation {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    .activity-icon.appointment {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+    }
+
+    .activity-icon.system {
+      background: rgba(168, 85, 247, 0.2);
+      color: #a855f7;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-message {
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .activity-time {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .conversations-panel {
+      grid-column: 1 / -1;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .conversations-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .conversations-table th,
+    .conversations-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #2c4a5e;
+    }
+
+    .conversations-table th {
+      background: #173140;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.9rem;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .conversations-table td {
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    .status-completed {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .language-badge {
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #173140;
+      color: var(--text);
+    }
+
+    .actions-panel {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .action-btn {
+      background: linear-gradient(90deg, #13ce66, #16a34a);
+      color: #04131c;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .action-btn.secondary {
+      background: #173140;
+      color: var(--text);
+      border: 1px solid #2c4a5e;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .admin-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+      }
+      
+      .system-status {
+        justify-content: center;
+      }
+    }
+  </style>
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="page with-navbar">
+  <nav class="navbar">
+    <a href="./index.html" class="navbar-brand">
+      ⚙️ Bot de Citas CLARITY - Admin
+    </a>
+    <div class="navbar-nav">
+      <a href="./index.html" class="nav-link">Inicio</a>
+      <a href="./conversations.html" class="nav-link">Demo</a>
+      <a href="./manager.html" class="nav-link">Gestor</a>
+      <a href="./dashboard.html" class="nav-link">Dashboard</a>
+      <a href="./admin.html" class="nav-link active">Admin</a>
+      <a href="./settings.html" class="nav-link">Config</a>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1 class="admin-title">Panel Administrativo</h1>
+      <div class="system-status">
+        <div id="systemStatus" class="status-indicator status-offline">
+          <div class="status-dot"></div>
+          <span>Conectando...</span>
+        </div>
+        <div id="clientCount" class="status-indicator status-online">
+          <div class="status-dot"></div>
+          <span>0 clientes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Panel de Estadísticas de Conversaciones -->
+      <div class="stats-panel">
+        <div class="stats-header">
+          <h3 class="stats-title">📞 Conversaciones</h3>
+          <button class="refresh-btn" onclick="refreshStats()">Actualizar</button>
+        </div>
+        <div class="stats-grid" id="conversationStats">
+          <div class="stat-item">
+            <div class="stat-value" id="totalConversations">-</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="activeConversations">-</div>
+            <div class="stat-label">Activas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="completedConversations">-</div>
+            <div class="stat-label">Completadas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Estadísticas de Citas -->
+      <div class="stats-panel">
+        <div class="stats-header">
+          <h3 class="stats-title">📅 Citas</h3>
+          <button class="refresh-btn" onclick="refreshAppointments()">Actualizar</button>
+        </div>
+        <div class="stats-grid" id="appointmentStats">
+          <div class="stat-item">
+            <div class="stat-value" id="totalAppointments">-</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="confirmedAppointments">-</div>
+            <div class="stat-label">Confirmadas</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="pendingAppointments">-</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Actividad en Tiempo Real -->
+    <div class="stats-panel">
+      <div class="stats-header">
+        <h3 class="stats-title">🔴 Actividad en Tiempo Real</h3>
+        <div class="actions-panel">
+          <button class="refresh-btn" onclick="clearActivity()">Limpiar</button>
+        </div>
+      </div>
+      <div class="activity-feed" id="activityFeed">
+        <div class="activity-item">
+          <div class="activity-icon system">⚙️</div>
+          <div class="activity-content">
+            <div class="activity-message">Sistema iniciado</div>
+            <div class="activity-time">Esperando conexión...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Conversaciones Activas -->
+    <div class="conversations-panel">
+      <div class="stats-header">
+        <h3 class="stats-title">💬 Sesiones Activas</h3>
+        <div class="actions-panel">
+          <button class="action-btn" onclick="exportData('excel')">Exportar Excel</button>
+          <button class="action-btn secondary" onclick="exportData('json')">Exportar JSON</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto; max-height: 400px;">
+        <table class="conversations-table">
+          <thead>
+            <tr>
+              <th>ID Sesión</th>
+              <th>Estado</th>
+              <th>Idioma</th>
+              <th>Inicio</th>
+              <th>Última Actividad</th>
+              <th>Mensajes</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="conversationsTableBody">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 40px; color: var(--muted);">
+                Cargando sesiones...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class AdminDashboard {
+      constructor() {
+        this.socket = null;
+        this.stats = {};
+        this.conversations = new Map();
+        this.appointments = new Map();
+        this.activityBuffer = [];
+        this.maxActivityItems = 50;
+        
+        this.init();
+      }
+
+      init() {
+        this.connectSocket();
+        this.loadInitialData();
+        this.setupEventHandlers();
+        
+        // Actualizar cada 30 segundos
+        setInterval(() => this.refreshStats(), 30000);
+      }
+
+      connectSocket() {
+        try {
+          this.socket = io();
+          
+          this.socket.on('connect', () => {
+            this.updateSystemStatus(true);
+            this.addActivity('system', 'Conectado al servidor', new Date());
+          });
+
+          this.socket.on('disconnect', () => {
+            this.updateSystemStatus(false);
+            this.addActivity('system', 'Desconectado del servidor', new Date());
+          });
+
+          this.socket.on('statsUpdate', (stats) => {
+            this.updateStats(stats);
+          });
+
+          this.socket.on('sessionCreated', (session) => {
+            this.conversations.set(session.id, session);
+            this.addActivity('conversation', `Nueva sesión iniciada: ${session.id}`, new Date());
+            this.updateConversationsTable();
+          });
+
+          this.socket.on('sessionCompleted', (session) => {
+            if (this.conversations.has(session.id)) {
+              this.conversations.get(session.id).completed = true;
+              this.addActivity('conversation', `Sesión completada: ${session.id}`, new Date());
+              this.updateConversationsTable();
+            }
+          });
+
+          this.socket.on('appointmentCreated', (appointment) => {
+            this.appointments.set(appointment.id, appointment);
+            this.addActivity('appointment', `Nueva cita creada: ${appointment.id}`, new Date());
+          });
+
+          this.socket.on('appointmentUpdated', (appointment) => {
+            this.appointments.set(appointment.id, appointment);
+            this.addActivity('appointment', `Cita actualizada: ${appointment.id}`, new Date());
+          });
+
+          this.socket.on('conversationUpdate', (data) => {
+            this.addActivity('conversation', `Mensaje en sesión ${data.sessionId}`, new Date(data.timestamp));
+          });
+
+        } catch (error) {
+          console.error('Error connecting to socket:', error);
+          this.updateSystemStatus(false);
+        }
+      }
+
+      async loadInitialData() {
+        try {
+          // Cargar estadísticas
+          const statsResponse = await fetch('/api/stats');
+          if (statsResponse.ok) {
+            const stats = await statsResponse.json();
+            this.updateStats(stats);
+          }
+
+          // Cargar citas
+          const appointmentsResponse = await fetch('/api/appointments');
+          if (appointmentsResponse.ok) {
+            const appointments = await appointmentsResponse.json();
+            appointments.forEach(apt => this.appointments.set(apt.id, apt));
+          }
+
+        } catch (error) {
+          console.error('Error loading initial data:', error);
+          this.addActivity('system', 'Error cargando datos iniciales', new Date());
+        }
+      }
+
+      updateSystemStatus(online) {
+        const statusElement = document.getElementById('systemStatus');
+        if (online) {
+          statusElement.className = 'status-indicator status-online';
+          statusElement.innerHTML = '<div class="status-dot"></div><span>En línea</span>';
+        } else {
+          statusElement.className = 'status-indicator status-offline';
+          statusElement.innerHTML = '<div class="status-dot"></div><span>Desconectado</span>';
+        }
+      }
+
+      updateStats(stats) {
+        this.stats = stats;
+        
+        // Actualizar estadísticas de conversaciones
+        if (stats.conversations) {
+          document.getElementById('totalConversations').textContent = stats.conversations.active || 0;
+          document.getElementById('activeConversations').textContent = 
+            Object.values(stats.conversations.byState || {}).reduce((sum, count) => sum + count, 0);
+          document.getElementById('completedConversations').textContent = stats.conversations.completed || 0;
+        }
+
+        // Actualizar estadísticas de citas
+        if (stats.data && stats.data.appointments) {
+          document.getElementById('totalAppointments').textContent = stats.data.appointments.total || 0;
+          document.getElementById('confirmedAppointments').textContent = stats.data.appointments.confirmed || 0;
+          document.getElementById('pendingAppointments').textContent = stats.data.appointments.pending || 0;
+        }
+
+        // Actualizar contador de clientes
+        if (stats.server) {
+          document.getElementById('clientCount').innerHTML = 
+            `<div class="status-dot"></div><span>${stats.server.connectedClients || 0} clientes</span>';
+        }
+      }
+
+      addActivity(type, message, timestamp) {
+        const activity = { type, message, timestamp };
+        this.activityBuffer.unshift(activity);
+        
+        // Limitar buffer
+        if (this.activityBuffer.length > this.maxActivityItems) {
+          this.activityBuffer = this.activityBuffer.slice(0, this.maxActivityItems);
+        }
+        
+        this.updateActivityFeed();
+      }
+
+      updateActivityFeed() {
+        const feedElement = document.getElementById('activityFeed');
+        feedElement.innerHTML = '';
+        
+        this.activityBuffer.forEach(activity => {
+          const itemElement = document.createElement('div');
+          itemElement.className = 'activity-item';
+          
+          const iconMap = {
+            conversation: '💬',
+            appointment: '📅',
+            system: '⚙️'
+          };
+          
+          itemElement.innerHTML = `
+            <div class="activity-icon ${activity.type}">
+              ${iconMap[activity.type] || '•'}
+            </div>
+            <div class="activity-content">
+              <div class="activity-message">${activity.message}</div>
+              <div class="activity-time">${this.formatTime(activity.timestamp)}</div>
+            </div>
+          `;
+          
+          feedElement.appendChild(itemElement);
+        });
+      }
+
+      updateConversationsTable() {
+        const tbody = document.getElementById('conversationsTableBody');
+        tbody.innerHTML = '';
+        
+        if (this.conversations.size === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 40px; color: var(--muted);">
+                No hay sesiones activas
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        Array.from(this.conversations.values()).forEach(session => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${session.id}</td>
+            <td><span class="status-badge status-${session.completed ? 'completed' : 'active'}">${session.state || 'ACTIVE'}</span></td>
+            <td><span class="language-badge">${session.language || 'es'}</span></td>
+            <td>${this.formatTime(session.startTime)}</td>
+            <td>${this.formatTime(session.lastActivity)}</td>
+            <td>${session.messageHistory ? session.messageHistory.length : 0}</td>
+            <td>
+              <button class="refresh-btn" onclick="dashboard.viewSession('${session.id}')">Ver</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      formatTime(timestamp) {
+        if (!timestamp) return '-';
+        const date = new Date(timestamp);
+        return date.toLocaleString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      setupEventHandlers() {
+        // Heartbeat cada 30 segundos
+        setInterval(() => {
+          if (this.socket && this.socket.connected) {
+            this.socket.emit('heartbeat');
+          }
+        }, 30000);
+      }
+
+      async refreshStats() {
+        try {
+          const response = await fetch('/api/stats');
+          if (response.ok) {
+            const stats = await response.json();
+            this.updateStats(stats);
+            this.addActivity('system', 'Estadísticas actualizadas', new Date());
+          }
+        } catch (error) {
+          console.error('Error refreshing stats:', error);
+          this.addActivity('system', 'Error actualizando estadísticas', new Date());
+        }
+      }
+
+      async refreshAppointments() {
+        try {
+          const response = await fetch('/api/appointments');
+          if (response.ok) {
+            const appointments = await response.json();
+            this.appointments.clear();
+            appointments.forEach(apt => this.appointments.set(apt.id, apt));
+            this.addActivity('system', 'Citas actualizadas', new Date());
+          }
+        } catch (error) {
+          console.error('Error refreshing appointments:', error);
+        }
+      }
+
+      clearActivity() {
+        this.activityBuffer = [];
+        this.updateActivityFeed();
+      }
+
+      async exportData(format) {
+        try {
+          const response = await fetch('/api/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ format })
+          });
+          
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `citas_export_${new Date().toISOString().split('T')[0]}.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            this.addActivity('system', `Datos exportados en formato ${format}`, new Date());
+          }
+        } catch (error) {
+          console.error('Error exporting data:', error);
+          this.addActivity('system', 'Error exportando datos', new Date());
+        }
+      }
+
+      viewSession(sessionId) {
+        window.open(`/conversations.html?session=${sessionId}`, '_blank');
+      }
+    }
+
+    // Funciones globales para botones
+    let dashboard;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      dashboard = new AdminDashboard();
+    });
+
+    function refreshStats() {
+      dashboard.refreshStats();
+    }
+
+    function refreshAppointments() {
+      dashboard.refreshAppointments();
+    }
+
+    function clearActivity() {
+      dashboard.clearActivity();
+    }
+
+    function exportData(format) {
+      dashboard.exportData(format);
+    }
+  </script>
+</body>
+</html>
