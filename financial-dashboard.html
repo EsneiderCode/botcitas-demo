@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Finanz-Dashboard - CLARITY Glasfaser</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    .dashboard-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    .dashboard-header {
+      margin-bottom: 32px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .language-selector {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .lang-btn {
+      padding: 8px 12px;
+      border: 2px solid #2c4a5e;
+      background: #173140;
+      color: var(--text);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn:hover {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .lang-btn.active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #451a03;
+    }
+    
+    .dashboard-header h1 {
+      margin: 0 0 8px;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* KPI Cards financieras */
+    .financial-kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .financial-card {
+      background: linear-gradient(135deg, var(--card), #1a3540);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid #2c4a5e;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border-left: 4px solid #f59e0b;
+    }
+    
+    .financial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+    }
+    
+    .financial-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    
+    .financial-title {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    
+    .financial-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    .financial-value {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    
+    .financial-value.negative {
+      color: #ef4444;
+    }
+    
+    .financial-value.positive {
+      color: #22c55e;
+    }
+    
+    .financial-trend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .financial-subtitle {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+    
+    /* Charts financieros */
+    .charts-financial {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .chart-container {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 1px solid #2c4a5e;
+      min-height: 400px;
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+    
+    canvas {
+      background: transparent !important;
+      border-radius: 12px;
+      max-height: 320px !important;
+    }
+    
+    
+    
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 16px;
+      }
+      
+      .financial-kpis {
+        grid-template-columns: 1fr;
+      }
+      
+      .charts-financial {
+        grid-template-columns: 1fr;
+      }
+      
+      .financial-value {
+        font-size: 2rem;
+      }
+    }
+  </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="page with-navbar">
+  <nav class="navbar">
+    <a href="./index.html" class="navbar-brand">
+      💰 CLARITY Finanzdashboard
+    </a>
+    <div class="navbar-nav">
+      <a href="./index.html" class="nav-link">Startseite</a>
+      <a href="./manager.html" class="nav-link">Verwaltung</a>
+      <a href="./dashboard.html" class="nav-link">Dashboard</a>
+      <a href="./financial-dashboard.html" class="nav-link active">Finanzen</a>
+      <a href="./settings.html" class="nav-link">Einstellungen</a>
+    </div>
+  </nav>
+  
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1 id="dashboardTitle">💰 Kosten-Dashboard</h1>
+          <p id="dashboardSubtitle">Finanzanalyse des Termin-Management Systems und Technikerkosten</p>
+        </div>
+        <div class="language-selector">
+          <button class="lang-btn" data-lang="de">🇩🇪</button>
+          <button class="lang-btn" data-lang="es">🇪🇸</button>
+          <button class="lang-btn" data-lang="en">🇺🇸</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="financial-kpis">
+      <div class="financial-card">
+        <div class="financial-header">
+          <div>
+            <h3 class="financial-title" id="systemCostsTitle">System-Betriebskosten</h3>
+            <div class="financial-value negative" id="system-costs">€2,340</div>
+            <div class="financial-trend trend-down" id="systemCostsTrend">
+              ⬇️ -5.2% vs letzter Monat
+            </div>
+            <div class="financial-subtitle" id="systemCostsSubtitle">Bot, Server, Wartung</div>
+          </div>
+          <div class="financial-icon">🖥️</div>
+        </div>
+      </div>
+      
+      <div class="financial-card">
+        <div class="financial-header">
+          <div>
+            <h3 class="financial-title" id="technicianCostsTitle">Technikerkosten</h3>
+            <div class="financial-value negative" id="technician-costs">€12,480</div>
+            <div class="financial-trend trend-up" id="technicianCostsTrend">
+              ⬆️ +3.1% vs letzter Monat
+            </div>
+            <div class="financial-subtitle" id="technicianCostsSubtitle">16 Techniker Personal</div>
+          </div>
+          <div class="financial-icon">👥</div>
+        </div>
+      </div>
+      
+      <div class="financial-card">
+        <div class="financial-header">
+          <div>
+            <h3 class="financial-title" id="efficiencySavingsTitle">Effizienz-Einsparungen</h3>
+            <div class="financial-value positive" id="efficiency-savings">€4,870</div>
+            <div class="financial-trend trend-up" id="efficiencySavingsTrend">
+              ⬆️ +18.3% vs letzter Monat
+            </div>
+            <div class="financial-subtitle" id="efficiencySavingsSubtitle">Durch Automatisierung</div>
+          </div>
+          <div class="financial-icon">⚡</div>
+        </div>
+      </div>
+      
+      <div class="financial-card">
+        <div class="financial-header">
+          <div>
+            <h3 class="financial-title" id="costPerAppointmentTitle">Kosten pro Termin</h3>
+            <div class="financial-value" id="cost-per-appointment">€8.40</div>
+            <div class="financial-trend trend-down" id="costPerAppointmentTrend">
+              ⬇️ -12% vs letzter Monat
+            </div>
+            <div class="financial-subtitle" id="costPerAppointmentSubtitle">Durchschnitt alle Termine</div>
+          </div>
+          <div class="financial-icon">📅</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="charts-financial">
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title" id="chartTitle1">📈 System vs. Technikerkosten</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title" id="chartTitle2">🥧 Kostenverteilung Projekt</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="costsChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title" id="chartTitle3">📊 Effizienz-Einsparungen</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="roiChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3 class="chart-title" id="chartTitle4">💳 Kosten pro Team/Region</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="regionChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Chart.js Konfiguration
+      Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+      Chart.defaults.font.size = 12;
+      Chart.defaults.color = '#a9c0cf';
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = false;
+      
+      // Umsatz vs. Kosten Chart
+      new Chart(document.getElementById('revenueChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'Technikerkosten (€)',
+            data: [11800, 12100, 12350, 12200, 12480, 12650],
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#ef4444',
+            pointBorderColor: '#162733',
+            pointBorderWidth: 2,
+            borderWidth: 3
+          }, {
+            label: 'System-Betriebskosten (€)',
+            data: [2480, 2350, 2420, 2380, 2340, 2290],
+            borderColor: '#06b6d4',
+            backgroundColor: 'rgba(6, 182, 212, 0.2)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#06b6d4',
+            pointBorderColor: '#162733',
+            pointBorderWidth: 2,
+            borderWidth: 3
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: '#a9c0cf',
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: '#0f1b23',
+              titleColor: '#e9f1f6',
+              bodyColor: '#a9c0cf',
+              borderColor: '#2c4a5e',
+              borderWidth: 1
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '€' + (value / 1000).toFixed(0) + 'k';
+                },
+                color: '#a9c0cf'
+              },
+              grid: {
+                color: 'rgba(44, 74, 94, 0.3)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#a9c0cf'
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      // Kostenverteilung
+      new Chart(document.getElementById('costsChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Techniker Personal', 'System-Betrieb', 'Bot-Wartung', 'Server-Hosting', 'Tools & Lizenzen'],
+          datasets: [{
+            data: [84.3, 8.4, 3.1, 2.8, 1.4],
+            backgroundColor: [
+              '#ef4444',
+              '#f59e0b',
+              '#8b5cf6',
+              '#06b6d4',
+              '#64748b'
+            ],
+            borderColor: '#162733',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          cutout: '60%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#a9c0cf',
+                usePointStyle: true,
+                padding: 15
+              }
+            },
+            tooltip: {
+              backgroundColor: '#0f1b23',
+              titleColor: '#e9f1f6',
+              bodyColor: '#a9c0cf',
+              borderColor: '#2c4a5e',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.parsed + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // ROI Entwicklung
+      new Chart(document.getElementById('roiChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'ROI (%)',
+            data: [180, 210, 250, 280, 340, 380],
+            backgroundColor: function(context) {
+              const value = context.parsed.y;
+              if (value >= 300) return 'rgba(34, 197, 94, 0.8)';
+              if (value >= 200) return 'rgba(245, 158, 11, 0.8)';
+              return 'rgba(239, 68, 68, 0.8)';
+            },
+            borderColor: function(context) {
+              const value = context.parsed.y;
+              if (value >= 300) return '#22c55e';
+              if (value >= 200) return '#f59e0b';
+              return '#ef4444';
+            },
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#0f1b23',
+              titleColor: '#e9f1f6',
+              bodyColor: '#a9c0cf',
+              borderColor: '#2c4a5e',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return 'ROI: ' + context.parsed.y + '%';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                },
+                color: '#a9c0cf'
+              },
+              grid: {
+                color: 'rgba(44, 74, 94, 0.3)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#a9c0cf'
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      // Regionale Auftragswerte
+      new Chart(document.getElementById('regionChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt', 'Stuttgart'],
+          datasets: [{
+            label: 'Durchschnittlicher Auftragswert (€)',
+            data: [145, 132, 128, 121, 118, 115],
+            backgroundColor: 'rgba(245, 158, 11, 0.8)',
+            borderColor: '#f59e0b',
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#0f1b23',
+              titleColor: '#e9f1f6',
+              bodyColor: '#a9c0cf',
+              borderColor: '#2c4a5e',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': €' + context.parsed.x;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '€' + value;
+                },
+                color: '#a9c0cf'
+              },
+              grid: {
+                color: 'rgba(44, 74, 94, 0.3)'
+              }
+            },
+            y: {
+              ticks: {
+                color: '#a9c0cf'
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+
+      // Sistema de idiomas para financial dashboard
+      const translations = {
+        de: {
+          dashboardTitle: '💰 Kosten-Dashboard',
+          dashboardSubtitle: 'Finanzanalyse des Termin-Management Systems und Technikerkosten',
+          systemCostsTitle: 'System-Betriebskosten',
+          systemCostsTrend: '⬇️ -5.2% vs letzter Monat',
+          systemCostsSubtitle: 'Bot, Server, Wartung',
+          technicianCostsTitle: 'Technikerkosten',
+          technicianCostsTrend: '⬆️ +3.1% vs letzter Monat',
+          technicianCostsSubtitle: '16 Techniker Personal',
+          efficiencySavingsTitle: 'Effizienz-Einsparungen',
+          efficiencySavingsTrend: '⬆️ +18.3% vs letzter Monat',
+          efficiencySavingsSubtitle: 'Durch Automatisierung',
+          costPerAppointmentTitle: 'Kosten pro Termin',
+          costPerAppointmentTrend: '⬇️ -12% vs letzter Monat',
+          costPerAppointmentSubtitle: 'Durchschnitt alle Termine',
+          chartTitle1: '📈 System vs. Technikerkosten',
+          chartTitle2: '🥧 Kostenverteilung Projekt',
+          chartTitle3: '📊 Effizienz-Einsparungen',
+          chartTitle4: '💳 Kosten pro Team/Region'
+        },
+        es: {
+          dashboardTitle: '💰 Dashboard Financiero',
+          dashboardSubtitle: 'Análisis financiero del sistema de gestión de citas y costos de técnicos',
+          systemCostsTitle: 'Costos Operativos Sistema',
+          systemCostsTrend: '⬇️ -5.2% vs mes anterior',
+          systemCostsSubtitle: 'Bot, Servidor, Mantenimiento',
+          technicianCostsTitle: 'Costos de Técnicos',
+          technicianCostsTrend: '⬆️ +3.1% vs mes anterior',
+          technicianCostsSubtitle: '16 Técnicos Personal',
+          efficiencySavingsTitle: 'Ahorros por Eficiencia',
+          efficiencySavingsTrend: '⬆️ +18.3% vs mes anterior',
+          efficiencySavingsSubtitle: 'Mediante Automatización',
+          costPerAppointmentTitle: 'Costo por Cita',
+          costPerAppointmentTrend: '⬇️ -12% vs mes anterior',
+          costPerAppointmentSubtitle: 'Promedio todas las citas',
+          chartTitle1: '📈 Sistema vs. Costos Técnicos',
+          chartTitle2: '🥧 Distribución Costos Proyecto',
+          chartTitle3: '📊 Ahorros por Eficiencia',
+          chartTitle4: '💳 Costos por Equipo/Región'
+        },
+        en: {
+          dashboardTitle: '💰 Financial Dashboard', 
+          dashboardSubtitle: 'Financial analysis of appointment management system and technician costs',
+          systemCostsTitle: 'System Operating Costs',
+          systemCostsTrend: '⬇️ -5.2% vs last month',
+          systemCostsSubtitle: 'Bot, Server, Maintenance',
+          technicianCostsTitle: 'Technician Costs',
+          technicianCostsTrend: '⬆️ +3.1% vs last month',
+          technicianCostsSubtitle: '16 Technician Staff',
+          efficiencySavingsTitle: 'Efficiency Savings',
+          efficiencySavingsTrend: '⬆️ +18.3% vs last month',
+          efficiencySavingsSubtitle: 'Through Automation',
+          costPerAppointmentTitle: 'Cost per Appointment',
+          costPerAppointmentTrend: '⬇️ -12% vs last month',
+          costPerAppointmentSubtitle: 'Average all appointments',
+          chartTitle1: '📈 System vs. Technician Costs',
+          chartTitle2: '🥧 Project Cost Distribution',
+          chartTitle3: '📊 Efficiency Savings',
+          chartTitle4: '💳 Costs per Team/Region'
+        }
+      };
+
+      function updateFinancialLanguage(lang) {
+        const texts = translations[lang];
+        if (!texts) return;
+
+        // Actualizar elementos específicos del header
+        const titleEl = document.getElementById('dashboardTitle');
+        const subtitleEl = document.getElementById('dashboardSubtitle');
+
+        if (titleEl) titleEl.textContent = texts.dashboardTitle;
+        if (subtitleEl) subtitleEl.textContent = texts.dashboardSubtitle;
+
+        // Actualizar KPIs
+        const systemCostsTitle = document.getElementById('systemCostsTitle');
+        const systemCostsTrend = document.getElementById('systemCostsTrend');
+        const systemCostsSubtitle = document.getElementById('systemCostsSubtitle');
+        
+        if (systemCostsTitle) systemCostsTitle.textContent = texts.systemCostsTitle;
+        if (systemCostsTrend) systemCostsTrend.textContent = texts.systemCostsTrend;
+        if (systemCostsSubtitle) systemCostsSubtitle.textContent = texts.systemCostsSubtitle;
+
+        const technicianCostsTitle = document.getElementById('technicianCostsTitle');
+        const technicianCostsTrend = document.getElementById('technicianCostsTrend');
+        const technicianCostsSubtitle = document.getElementById('technicianCostsSubtitle');
+        
+        if (technicianCostsTitle) technicianCostsTitle.textContent = texts.technicianCostsTitle;
+        if (technicianCostsTrend) technicianCostsTrend.textContent = texts.technicianCostsTrend;
+        if (technicianCostsSubtitle) technicianCostsSubtitle.textContent = texts.technicianCostsSubtitle;
+
+        const efficiencySavingsTitle = document.getElementById('efficiencySavingsTitle');
+        const efficiencySavingsTrend = document.getElementById('efficiencySavingsTrend');
+        const efficiencySavingsSubtitle = document.getElementById('efficiencySavingsSubtitle');
+        
+        if (efficiencySavingsTitle) efficiencySavingsTitle.textContent = texts.efficiencySavingsTitle;
+        if (efficiencySavingsTrend) efficiencySavingsTrend.textContent = texts.efficiencySavingsTrend;
+        if (efficiencySavingsSubtitle) efficiencySavingsSubtitle.textContent = texts.efficiencySavingsSubtitle;
+
+        const costPerAppointmentTitle = document.getElementById('costPerAppointmentTitle');
+        const costPerAppointmentTrend = document.getElementById('costPerAppointmentTrend');
+        const costPerAppointmentSubtitle = document.getElementById('costPerAppointmentSubtitle');
+        
+        if (costPerAppointmentTitle) costPerAppointmentTitle.textContent = texts.costPerAppointmentTitle;
+        if (costPerAppointmentTrend) costPerAppointmentTrend.textContent = texts.costPerAppointmentTrend;
+        if (costPerAppointmentSubtitle) costPerAppointmentSubtitle.textContent = texts.costPerAppointmentSubtitle;
+
+        // Actualizar títulos de gráficos
+        const chartTitle1 = document.getElementById('chartTitle1');
+        const chartTitle2 = document.getElementById('chartTitle2');
+        const chartTitle3 = document.getElementById('chartTitle3');
+        const chartTitle4 = document.getElementById('chartTitle4');
+        
+        if (chartTitle1) chartTitle1.textContent = texts.chartTitle1;
+        if (chartTitle2) chartTitle2.textContent = texts.chartTitle2;
+        if (chartTitle3) chartTitle3.textContent = texts.chartTitle3;
+        if (chartTitle4) chartTitle4.textContent = texts.chartTitle4;
+      }
+
+      // Manejar selector de idiomas
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const currentLang = localStorage.getItem('clarity_language') || 'de';
+      
+      // Cargar idioma guardado
+      updateFinancialLanguage(currentLang);
+      
+      // Marcar botón activo
+      langButtons.forEach(btn => {
+        if (btn.dataset.lang === currentLang) {
+          btn.classList.add('active');
+        }
+      });
+      
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // Actualizar botones activos
+          langButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Cambiar textos
+          updateFinancialLanguage(lang);
+          
+          // Guardar preferencia
+          localStorage.setItem('clarity_language', lang);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

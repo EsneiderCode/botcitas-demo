@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Conversacional - Bot de Citas CLARITY</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body class="page with-navbar">
+  <nav class="navbar">
+    <a href="./index.html" class="navbar-brand">
+      💬 Bot de Citas CLARITY
+    </a>
+    <div class="navbar-nav">
+      <a href="./index.html" class="nav-link">Inicio</a>
+      <a href="./conversations.html" class="nav-link active">Demo</a>
+      <a href="./manager.html" class="nav-link">Gestor</a>
+      <a href="./dashboard.html" class="nav-link">Dashboard</a>
+      <a href="./admin.html" class="nav-link">Admin</a>
+      <a href="./settings.html" class="nav-link">Config</a>
+    </div>
+  </nav>
+  
+  <div class="device">
+    <div class="chat" id="chat"></div>
+    <div class="quick" id="quick"></div>
+  </div>
+
+  <script defer src="./js/i18n.js"></script>
+  <script defer src="./js/flows.js"></script>
+  <script defer src="./js/app.js"></script>
+  <script>
+    // Usar el flujo original funcional
+    window.DEMO_SCENARIO = "schedule";
+  </script>
+</body>
+</html>

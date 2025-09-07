@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google" content="notranslate">
+  <meta name="robots" content="noindex, nofollow">
+  <title>CLARITY Glasfaser Termin-Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/styles.css">
+  <style>
+    /* Estilos específicos para la página principal */
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(70% 70% at 50% 30%, #1b3040, #0f1b23);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .hero {
+      text-align: center;
+      padding: 24px 12px;
+    }
+    
+    .hero h1 {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    
+    .hero p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+    
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-top: 30px;
+    }
+    
+    /* Flujo de trabajo */
+    .workflow-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 12px;
+      border: 1px solid #3b82f6;
+    }
+    
+    .step {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: rgba(169, 192, 207, 0.1);
+      color: var(--muted);
+      transition: all 0.3s ease;
+    }
+    
+    .step.active {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .arrow {
+      color: #3b82f6;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    /* Acción principal */
+    .main-action {
+      margin: 40px 0;
+    }
+    
+    .primary-card {
+      background: linear-gradient(135deg, var(--card), #1a3540);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+      border: 2px solid #3b82f6;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .primary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #22c55e, #f59e0b);
+    }
+    
+    .card-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+    
+    .primary-card h2 {
+      font-size: 2rem;
+      margin: 0 0 16px;
+      background: linear-gradient(135deg, #3b82f6, #22c55e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .features-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    .feature {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    
+    .primary-btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
+    }
+    
+    /* Secciones */
+    .modules-section,
+    .demo-section {
+      margin: 50px 0;
+    }
+    
+    .modules-section h3,
+    .demo-section h3 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0 0 32px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    
+    /* Módulos */
+    .scenario-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid #2c4a5e;
+    }
+    
+    .scenario-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      border-color: #3b82f6;
+    }
+    
+    .module-card {
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .card-icon-small {
+      font-size: 1.5rem;
+      margin-right: 12px;
+    }
+    
+    .module-type {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .module-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 12px 0;
+    }
+    
+    .stat {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    /* Demos */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .demo-card {
+      background: rgba(169, 192, 207, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #2c4a5e;
+      transition: all 0.2s ease;
+    }
+    
+    .demo-card:hover {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+    
+    .demo-card h4 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    
+    .demo-btn {
+      background: transparent;
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    
+    .demo-btn:hover {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .scenario-card h2 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .scenario-card p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    
+    .scenario-card button {
+      background: linear-gradient(90deg, #13ce66, #16a34a);
+      color: #04131c;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      width: 100%;
+    }
+    
+    .scenario-card button:hover {
+      transform: translateY(-2px);
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid #2c4a5e;
+    }
+    
+    /* Header superior */
+    .header-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    
+    .language-selector {
+      display: flex;
+      gap: 8px;
+      background: rgba(169, 192, 207, 0.1);
+      padding: 8px;
+      border-radius: 12px;
+      border: 1px solid #2c4a5e;
+    }
+    
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .lang-btn:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .lang-btn.active {
+      background: #3b82f6;
+      color: white;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .scenario-card {
+        padding: 20px;
+      }
+      
+      .language-selector {
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+      
+      .lang-btn {
+        font-size: 0.8rem;
+        padding: 5px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="header-top">
+        <div class="language-selector">
+          <button class="lang-btn active" data-lang="de">🇩🇪 Deutsch</button>
+          <button class="lang-btn" data-lang="es">🇪🇸 Español</button>
+          <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+        </div>
+      </div>
+      <h1 id="mainTitle">CLARITY Glasfaser Termin-Management</h1>
+      <p id="mainSubtitle">Integrierte Plattform für Kundenverwaltung und automatisierte Terminbuchung mit externer Systemintegration</p>
+      <div class="workflow-indicator">
+        <span class="step active" id="step1">📋 Kundenverwaltung</span>
+        <span class="arrow">→</span>
+        <span class="step" id="step2">🤖 WhatsApp Bot</span>
+        <span class="arrow">→</span>
+        <span class="step" id="step3">📅 Terminsystem</span>
+      </div>
+    </div>
+    
+    <!-- Acción principal -->
+    <div class="main-action">
+      <div class="primary-card">
+        <div class="card-icon">📋</div>
+        <h2 id="primaryCardTitle">Kundenverwaltung</h2>
+        <p id="primaryCardDesc">Haupteinstiegspunkt des Systems. Laden Sie Ihre Kundendatenbank hoch und verwalten Sie Termine massenhaft mit automatischer Integration in das externe Terminsystem.</p>
+        <div class="features-list">
+          <span class="feature" id="feature1">✅ Massen-CSV-Upload</span>
+          <span class="feature" id="feature2">✅ Echtzeit-Synchronisation</span>
+          <span class="feature" id="feature3">✅ Externe API-Integration</span>
+          <span class="feature" id="feature4">✅ Massenverwaltung</span>
+        </div>
+        <button class="primary-btn" data-href="manager.html" id="primaryBtn">Kundenverwaltung starten</button>
+      </div>
+    </div>
+    
+    <!-- Módulos del sistema -->
+    <div class="modules-section">
+      <h3>Módulos del Sistema</h3>
+      
+      <div class="grid">
+        <div class="scenario-card module-card">
+          <div class="card-header">
+            <div class="card-icon-small">📊</div>
+            <h2>Dashboard Analytics</h2>
+            <span class="module-type">Análisis</span>
+          </div>
+          <p>Métricas en tiempo real, ROI, conversión y rendimiento del sistema integrado.</p>
+          <div class="module-stats">
+            <span class="stat">📈 KPIs en tiempo real</span>
+            <span class="stat">💰 Análisis financiero</span>
+          </div>
+          <button data-href="dashboard.html">Ver Dashboard</button>
+        </div>
+        
+        <div class="scenario-card module-card">
+          <div class="card-header">
+            <div class="card-icon-small">🤖</div>
+            <h2>Bot WhatsApp</h2>
+            <span class="module-type">Automatización</span>
+          </div>
+          <p>Simulador del bot de WhatsApp que interactúa con los datos del gestor y sistema externo.</p>
+          <div class="module-stats">
+            <span class="stat">🗓️ Agendar citas</span>
+            <span class="stat">⚙️ Reprogramar/Cancelar</span>
+          </div>
+          <button data-href="conversations.html">Probar Bot</button>
+        </div>
+        
+        <div class="scenario-card module-card">
+          <div class="card-header">
+            <div class="card-icon-small">⚙️</div>
+            <h2>Configuración</h2>
+            <span class="module-type">Administración</span>
+          </div>
+          <p>Configuración de integraciones, parámetros del bot y sincronización con sistemas externos.</p>
+          <div class="module-stats">
+            <span class="stat">🔗 APIs externas</span>
+            <span class="stat">💫 Sincronización</span>
+          </div>
+          <button data-href="settings.html">Configurar</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Escenarios de prueba -->
+    <div class="demo-section">
+      <h3>Escenarios de Prueba</h3>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <h4>🗓️ Nueva Cita</h4>
+          <button class="demo-btn" data-href="conversations.html?scenario=new">Probar</button>
+        </div>
+        <div class="demo-card">
+          <h4>⚙️ Reprogramar</h4>
+          <button class="demo-btn" data-href="conversations.html?scenario=manage">Probar</button>
+        </div>
+        <div class="demo-card">
+          <h4>🔔 Recordatorios</h4>
+          <button class="demo-btn" data-href="conversations.html?scenario=missed">Probar</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><strong>Sistema de Gestión Integrada</strong> - El flujo de trabajo inicia en la administración de clientes y se integra automáticamente con sistemas externos de citas.<br>
+      <em>Demo estático para propósitos de presentación. En producción se conecta con APIs reales.</em></p>
+    </div>
+  </div>
+  
+  <script>
+    // Textos en diferentes idiomas
+    const translations = {
+      de: {
+        mainTitle: 'CLARITY Glasfaser Termin-Management',
+        mainSubtitle: 'Integrierte Plattform für Kundenverwaltung und automatisierte Terminbuchung mit externer Systemintegration',
+        step1: '📋 Kundenverwaltung',
+        step2: '🤖 WhatsApp Bot',
+        step3: '📅 Terminsystem',
+        primaryCardTitle: 'Kundenverwaltung',
+        primaryCardDesc: 'Haupteinstiegspunkt des Systems. Laden Sie Ihre Kundendatenbank hoch und verwalten Sie Termine massenhaft mit automatischer Integration in das externe Terminsystem.',
+        feature1: '✅ Massen-CSV-Upload',
+        feature2: '✅ Echtzeit-Synchronisation',
+        feature3: '✅ Externe API-Integration',
+        feature4: '✅ Massenverwaltung',
+        primaryBtn: 'Kundenverwaltung starten'
+      },
+      es: {
+        mainTitle: 'Sistema de Gestión de Citas CLARITY',
+        mainSubtitle: 'Plataforma integral de gestión de clientes y automatización de citas con integración a sistemas externos',
+        step1: '📋 Gestión de Clientes',
+        step2: '🤖 Bot WhatsApp', 
+        step3: '📅 Sistema de Citas',
+        primaryCardTitle: 'Gestor de Clientes',
+        primaryCardDesc: 'Punto de entrada principal del sistema. Carga tu base de datos de clientes y gestiona citas masivamente con integración automática al sistema de citas externo.',
+        feature1: '✅ Carga masiva CSV',
+        feature2: '✅ Sincronización en tiempo real',
+        feature3: '✅ Integración API externa',
+        feature4: '✅ Gestión masiva',
+        primaryBtn: 'Iniciar Gestión de Clientes'
+      },
+      en: {
+        mainTitle: 'CLARITY Fiber Optic Appointment Management',
+        mainSubtitle: 'Integrated platform for customer management and automated appointment scheduling with external system integration',
+        step1: '📋 Customer Management',
+        step2: '🤖 WhatsApp Bot',
+        step3: '📅 Appointment System',
+        primaryCardTitle: 'Customer Management',
+        primaryCardDesc: 'Main entry point of the system. Upload your customer database and manage appointments in bulk with automatic integration to the external appointment system.',
+        feature1: '✅ Bulk CSV Upload',
+        feature2: '✅ Real-time Synchronization',
+        feature3: '✅ External API Integration',
+        feature4: '✅ Bulk Management',
+        primaryBtn: 'Start Customer Management'
+      }
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Manejar clicks de botones
+      const buttons = document.querySelectorAll('button[data-href]');
+      
+      buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const href = this.getAttribute('data-href');
+          if (href) {
+            window.location.href = href;
+          }
+        });
+      });
+      
+      // Manejar selector de idiomas
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const currentLang = localStorage.getItem('clarity_language') || 'de';
+      
+      // Cargar idioma guardado
+      updateLanguage(currentLang);
+      
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const lang = this.dataset.lang;
+          
+          // Actualizar botones activos
+          langButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Cambiar textos
+          updateLanguage(lang);
+          
+          // Guardar preferencia
+          localStorage.setItem('clarity_language', lang);
+        });
+      });
+      
+      function updateLanguage(lang) {
+        const texts = translations[lang];
+        
+        if (texts) {
+          // Actualizar todos los textos
+          Object.keys(texts).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+              element.textContent = texts[key];
+            }
+          });
+          
+          // Actualizar botón activo
+          langButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

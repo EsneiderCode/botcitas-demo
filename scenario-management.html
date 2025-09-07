@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo – Gestión de Cita</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <script defer src="./js/i18n.js"></script>
+  <script defer src="./js/flows.js"></script>
+  <script defer src="./js/app.js"></script>
+</head>
+<body class="page">
+  <a class="back" href="./index-scenarios.html">Panel Principal</a>
+  <div class="device">
+    <div class="chat" id="chat"></div>
+    <div class="quick" id="quick"></div>
+  </div>
+  <script>
+    // Indicar al motor qué flujo cargar para gestión
+    window.DEMO_SCENARIO = "manage";
+  </script>
+</body>
+</html>
