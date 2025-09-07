@@ -243,6 +243,24 @@ class BotCitasServer {
 
     // Configuración del sistema
     this.app.get('/api/config', (req, res) => {
+      // Cargar mapeo de voces desde env con fallback a los defaults del cliente
+      let defaultVoices = { es: 'VmejBeYhbrcTPwDniox7', en: 'G17SuINrv2H9FC6nvetn', de: 'zl7GSCFv2aKISCB2LjZz' };
+      try {
+        // Intentar leer desde config-elevenlabs si existe
+        const eleven = require('./config-elevenlabs.js');
+        if (eleven && eleven.VOICES_LANGUAGE) {
+          defaultVoices = { ...defaultVoices, ...eleven.VOICES_LANGUAGE };
+        }
+      } catch (e) {
+        // Si no está disponible, mantener defaults locales
+      }
+
+      const voices = {
+        es: process.env.ELEVENLABS_VOICE_ID_ES || defaultVoices.es,
+        en: process.env.ELEVENLABS_VOICE_ID_EN || defaultVoices.en,
+        de: process.env.ELEVENLABS_VOICE_ID_DE || defaultVoices.de
+      };
+
       const publicConfig = {
         company: config.company,
         bot: {
@@ -253,6 +271,10 @@ class BotCitasServer {
         appointments: {
           timezone: config.appointments.timezone,
           slotDuration: config.appointments.slotDuration
+        },
+        tts: {
+          provider: 'ElevenLabs',
+          voices
         }
       };
       res.json(publicConfig);
