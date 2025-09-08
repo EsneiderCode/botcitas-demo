@@ -371,6 +371,8 @@ class ConversationsManager extends EventEmitter {
     return `C-${now.format('YYYY-MMDD-HHmm')}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
   }
 
+  
+
   assignTechnician(slot) {
     const technicians = Object.keys(this.config.technicians).filter(
       id => this.config.technicians[id].active

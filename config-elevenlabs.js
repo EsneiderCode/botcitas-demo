@@ -19,7 +19,7 @@ const ELEVENLABS_CONFIG = {
     apiKey: (isNode && process.env.ELEVENLABS_API_KEY) || 'TU_ELEVENLABS_API_KEY_AQUI',
     
     // ID de la voz por defecto (se usará si no se detecta idioma)
-    voiceId: 'zl7GSCFv2aKISCB2LjZz', // Voz alemana por defecto
+    voiceId: 'VmejBeYhbrcTPwDniox7', // Voz española por defecto
     
     // Configuración de la voz
     voiceSettings: {

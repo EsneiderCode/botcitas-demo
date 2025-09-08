@@ -944,7 +944,8 @@
                 // Configuración de ElevenLabs desde archivo externo
                 this.elevenLabsConfig = window.ELEVENLABS_CONFIG || {
                     apiKey: 'TU_ELEVENLABS_API_KEY_AQUI',
-                    voiceId: 'pNInz6obpgDQGcFmaJgB',
+                    // Voz por defecto en fallback (Español)
+                    voiceId: 'VmejBeYhbrcTPwDniox7',
                     voiceSettings: {
                         stability: 0.5,
                         similarity_boost: 0.5,
@@ -961,19 +962,35 @@
                     window.validateElevenLabsConfig();
                 }
                 
-                // Verificar configuración de voces
+                // Verificar configuración de voces (defaults si falta)
+                if (!window.VOICES_LANGUAGE) {
+                    window.VOICES_LANGUAGE = {
+                        es: 'VmejBeYhbrcTPwDniox7',
+                        en: 'G17SuINrv2H9FC6nvetn',
+                        de: 'zl7GSCFv2aKISCB2LjZz'
+                    };
+                    console.log('ℹ️ VOICES_LANGUAGE no definido; usando defaults locales:', window.VOICES_LANGUAGE);
+                }
+                // Forzar mapeo de voces fijo solicitado
+                window.VOICES_LANGUAGE = {
+                    es: 'VmejBeYhbrcTPwDniox7',
+                    en: 'G17SuINrv2H9FC6nvetn',
+                    de: 'zl7GSCFv2aKISCB2LjZz'
+                };
+                console.log('🔒 Voces forzadas:', window.VOICES_LANGUAGE);
                 console.log('🔧 Configuración de voces cargada:', {
                     'VOICES_LANGUAGE': window.VOICES_LANGUAGE,
                     'ELEVENLABS_CONFIG': window.ELEVENLABS_CONFIG ? 'Cargada' : 'No cargada',
                     'AVAILABLE_VOICES': window.AVAILABLE_VOICES ? 'Cargada' : 'No cargada'
                 });
+                // Asegurar fallback absoluto a voz española en el cliente
+                this.elevenLabsConfig.voiceId = window.VOICES_LANGUAGE.es;
+                if (window.ELEVENLABS_CONFIG) {
+                    window.ELEVENLABS_CONFIG.voiceId = window.VOICES_LANGUAGE.es;
+                }
                 
-                // Cargar mapeo de voces desde el servidor (env) y luego iniciar
-                this.loadServerVoices()
-                    .catch(() => {/* ignorar errores, usar defaults */})
-                    .finally(() => {
-                        this.initializeSimulation();
-                    });
+                // Iniciar directamente (sin sobreescribir desde el servidor)
+                this.initializeSimulation();
                 this.setupEventListeners();
                 
                 // Ejecutar prueba de lógica de grupos
@@ -1859,46 +1876,41 @@
             }
 
             async finalizeAppointment(withReminder) {
-                const lang = this.selectedLanguage || 'de'; // Alemán por defecto
+                const lang = this.selectedLanguage || 'de'; // Idioma
                 const slotText = `${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}`;
-                
-                // Mensaje final simplificado
+
+                // Datos inventados y simples para mostrar en el chat
+                const techs = ['Carlos R.', 'Ana M.', 'Luis G.'];
+                const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+                const makeId = () => {
+                    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                    let out = '';
+                    for (let i = 0; i < 5; i++) out += chars[Math.floor(Math.random() * chars.length)];
+                    return out;
+                };
+                const makeCode = () => Math.floor(1000 + Math.random() * 9000).toString();
+
+                // Guardar en memoria de la simulación
+                this.appointmentData.technicianName = this.appointmentData.technicianName || pick(techs);
+                this.appointmentData.appointmentId = this.appointmentData.appointmentId || makeId();
+                this.appointmentData.securityCode = this.appointmentData.securityCode || makeCode();
+
+                const reminderText = (lang === 'de')
+                    ? (withReminder ? '📲 Erinnerung gesendet.' : '👍 Keine Erinnerung.')
+                    : (lang === 'es')
+                        ? (withReminder ? '📲 Recordatorio enviado.' : '👍 Sin recordatorio.')
+                        : (withReminder ? '📲 Reminder sent.' : '👍 No reminder.');
+
+                // Mensaje final muy corto y claro con código
                 let finalText;
                 if (lang === 'de') {
-                    const reminderText = withReminder 
-                        ? '📲 Erinnerung gesendet.'
-                        : '👍 Keine Erinnerung.';
-                    
-                    finalText = `✅ **Bestätigt**
-
-📅 ${slotText}
-🏠 CLARITY
-
-${reminderText}`;
+                    finalText = `✅ Bestätigt\n\n📅 ${slotText}\n👨‍🔧 Techniker: ${this.appointmentData.technicianName}\n🆔 ID: ${this.appointmentData.appointmentId}\n🔐 Code: ${this.appointmentData.securityCode} (auch beim Techniker)\n\n${reminderText}`;
                 } else if (lang === 'es') {
-                    const reminderText = withReminder 
-                        ? '📲 Recordatorio enviado.'
-                        : '👍 Sin recordatorio.';
-                    
-                    finalText = `✅ **Confirmado**
-
-📅 ${slotText}
-🏠 CLARITY
-
-${reminderText}`;
+                    finalText = `✅ Confirmado\n\n📅 ${slotText}\n👨‍🔧 Técnico: ${this.appointmentData.technicianName}\n🆔 ID: ${this.appointmentData.appointmentId}\n🔐 Código: ${this.appointmentData.securityCode} (también para el técnico)\n\n${reminderText}`;
                 } else { // English
-                    const reminderText = withReminder 
-                        ? '📲 Reminder sent.'
-                        : '👍 No reminder.';
-                    
-                    finalText = `✅ **Confirmed**
-
-📅 ${slotText}
-🏠 CLARITY
-
-${reminderText}`;
+                    finalText = `✅ Confirmed\n\n📅 ${slotText}\n👨‍🔧 Technician: ${this.appointmentData.technicianName}\n🆔 ID: ${this.appointmentData.appointmentId}\n🔐 Code: ${this.appointmentData.securityCode} (also for the technician)\n\n${reminderText}`;
                 }
-                
+
                 await this.addMessage(finalText, 'received', 1000);
                 
                 // Mostrar opciones adicionales
@@ -2002,49 +2014,64 @@ ${reminderText}`;
             
             // Determinar si un mensaje debe ser audio o texto
             shouldUseAudio(message) {
-                // Usar audio para mensajes cortos (menos de 100 caracteres)
-                // y que no contengan información técnica compleja
-                const isShort = message.length < 100;
-                const hasTechnicalInfo = /(\d{2}:\d{2}|📅|📋|✅|❌|🔑|⚠️|🌐|⏰)/.test(message);
-                const hasEmojis = /[📅🔄❌📋❓🎉📲👍⚠️🔧🌐⏰🔑💥🚀📝📡✅💬👋🏠📡🌐📋⚠️🔗]/.test(message);
-                
+                // Heurística de importancia + aleatoriedad controlada
+                const length = message.length;
+                const hasTechnicalInfo = /(\d{2}:\d{2}|\b\d{1,2}[.:]\d{2}\b|📅|📋|✅|❌|🔑|⚠️|🌐|⏰|ID:|\b[A-Z]{2,}\d{2,}\b)/.test(message);
+                const mentionsReschedule = /(cambiar|otra|otro|ander(e|n)|change|reschedule|cancel(ar|)|stornieren|status|estado|check)/i.test(message);
+                const isShort = length < 300;
+                const isVeryLong = length > 400;
+                const hasEmojis = /[\u{1F300}-\u{1FAFF}]/u.test(message);
+
+                // Baja importancia: corto, sin datos técnicos/operativos
+                const isLowImportance = isShort && !hasTechnicalInfo && !mentionsReschedule;
+
+                // Probabilidad base 50/50
+                let probability = 0.5;
+                if (isLowImportance) probability = 0.8; // favorecer audio en respuestas menores
+                if (hasTechnicalInfo || isVeryLong) probability = 0.2; // preferir texto para info crítica/larga
+
+                const rand = Math.random();
+
+                const decision = rand < probability;
                 console.log('🔍 Evaluando si usar audio:', {
-                    mensaje: message.substring(0, 50) + '...',
-                    esCorto: isShort,
-                    tieneEmojis: hasEmojis,
-                    esTecnico: hasTechnicalInfo,
-                    resultado: isShort && hasEmojis && !hasTechnicalInfo
+                    preview: message.substring(0, 60) + (length > 60 ? '...' : ''),
+                    length,
+                    isShort,
+                    isVeryLong,
+                    hasTechnicalInfo,
+                    hasEmojis,
+                    mentionsReschedule,
+                    isLowImportance,
+                    probability,
+                    rand: Number(rand.toFixed(2)),
+                    decision
                 });
-                
-                // Usar audio si es corto, tiene emojis pero no es muy técnico
-                // TEMPORAL: Ser más permisivo para testing
-                const shouldUse = isShort && hasEmojis && !hasTechnicalInfo;
-                
-                // Si no cumple los criterios normales, usar audio para mensajes muy cortos con emojis
-                if (!shouldUse && isShort && hasEmojis) {
-                    console.log('🎵 Usando audio para mensaje corto con emojis (modo testing)');
-                    return true;
-                }
-                
-                return shouldUse;
+
+                return decision;
             }
             
             // Generar audio con ElevenLabs
             async generateAudio(text) {
                 try {
-                    // Detectar idioma del mensaje
-                    const detectedLanguage = this.detectLanguage(text);
-                    console.log('🌍 Idioma detectado:', detectedLanguage);
+                    // Elegir idioma para TTS priorizando el seleccionado en la UI
+                    const uiLang = this.selectedLanguage;
+                    const autoLang = this.detectLanguage(text);
+                    const ttsLanguage = (uiLang && ['es','en','de'].includes(uiLang)) ? uiLang : autoLang;
+                    console.log('🌍 Idioma TTS:', ttsLanguage, '| UI:', uiLang, '| Auto:', autoLang);
                     
                     // Obtener la voz correcta según el idioma
                     console.log('🔍 Verificando configuración de voces:', {
                         'window.VOICES_LANGUAGE': window.VOICES_LANGUAGE,
-                        'detectedLanguage': detectedLanguage,
+                        'ttsLanguage': ttsLanguage,
                         'availableVoices': window.VOICES_LANGUAGE ? Object.keys(window.VOICES_LANGUAGE) : 'No disponible'
                     });
                     
-                    const voiceId = window.VOICES_LANGUAGE ? window.VOICES_LANGUAGE[detectedLanguage] : this.elevenLabsConfig.voiceId;
-                    console.log('🎵 Usando voz:', voiceId, 'para idioma:', detectedLanguage);
+                    const voiceMap = (typeof window !== 'undefined' && window.VOICES_LANGUAGE) ? window.VOICES_LANGUAGE : {};
+                    const voiceId = voiceMap[ttsLanguage] || this.elevenLabsConfig.voiceId;
+                    if (!voiceMap[ttsLanguage]) {
+                        console.warn('⚠️ Voz no encontrada para idioma', ttsLanguage, '| usando fallback:', this.elevenLabsConfig.voiceId);
+                    }
+                    console.log('🎵 Usando voz:', voiceId, 'para idioma:', ttsLanguage);
                     console.log('🔧 Configuración ElevenLabs:', {
                         apiKey: this.elevenLabsConfig.apiKey ? 'Configurada' : 'No configurada',
                         voiceId: voiceId,
@@ -2436,6 +2463,9 @@ ${reminderText}`;
             }
 
             getSystemPrompt() {
+                const fechaActual = new Date().toLocaleDateString('es-ES', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
                 return `Eres CLARITY, un asistente virtual especializado en atención al cliente para instalaciones de fibra óptica. 
 
 INFORMACIÓN DE LA EMPRESA:
@@ -2446,7 +2476,10 @@ INFORMACIÓN DE LA EMPRESA:
 - Dirección: Musterstraße 15, 10115 Berlin
 - Número de contrato: DG-2024-89756
 
-Alterna entre texto o audio segun el caso.
+RESPUESTAS EN TEXTO/AUDIO:
+- Alterna entre texto y audio aproximadamente 50/50.
+- Cuando la respuesta sea breve y de baja importancia (saludos, confirmaciones simples, cortesía), prefiere AUDIO.
+- Cuando la respuesta incluya datos técnicos, horarios, identificadores o instrucciones críticas, prefiere TEXTO.
 
 Eres un asistente virtual de citas para un servicio de instalación de fibra óptica. Tu objetivo es entablar una conversación amable, profesional y clara con cada cliente, guiarle de manera natural a programar, reprogramar o cancelar una cita, y concluir la conversación una vez completada la gestión. Cumple las siguientes directrices:
 
@@ -2460,7 +2493,10 @@ Eres un asistente virtual de citas para un servicio de instalación de fibra óp
 8. **Cumplimiento normativo**: cuando corresponda, solicita la aceptación de los términos de servicio y la política de privacidad (DSGVO/GDPR) y ofrece la opción de eliminar sus datos (“/borrar_datos”).
 9. **Cierre de conversación**: una vez finalizado el proceso, agradece al cliente su preferencia y despídete cordialmente. Espera a que el cliente se despida o cierra la conversación educadamente.
 
-Sigue siempre estas instrucciones. Sé flexible en tus respuestas para sonar natural, pero no inventes información ni des recomendaciones fuera de tu competencia. Tu prioridad es ayudar a gestionar la cita de manera eficiente y respetuosa.`;
+importante cuando agendes, modifiques una cita le indiques al cliente un identificador de la cita, por ejemplo ABX30.
+Sigue siempre estas instrucciones. Sé flexible en tus respuestas para sonar natural, pero no inventes información ni des recomendaciones fuera de tu competencia. Tu prioridad es ayudar a gestionar la cita de manera eficiente y respetuosa.
+
+Fecha actual: ${fechaActual}.`;
             }
 
             showTypingIndicator() {
