@@ -173,7 +173,8 @@ class BotCitasServer {
           return res.status(400).json({ error: 'Falta parámetro obligatorio: text' });
         }
 
-        const voiceId = (req.body && req.body.voiceId) || process.env.ELEVENLABS_VOICE_ID || 'zl7GSCFv2aKISCB2LjZz';
+        // Fallback a voz española si no se especifica
+        const voiceId = (req.body && req.body.voiceId) || process.env.ELEVENLABS_VOICE_ID || 'VmejBeYhbrcTPwDniox7';
         const modelId = (req.body && req.body.model_id) || process.env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
         const voiceSettings = (req.body && req.body.voice_settings) || {
           stability: process.env.ELEVENLABS_STABILITY ? parseFloat(process.env.ELEVENLABS_STABILITY) : 0.5,

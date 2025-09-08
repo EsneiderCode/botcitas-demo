@@ -806,6 +806,9 @@
                         phone: "+49 151 1947 0267",
                         address: "Musterstraße 15, 10115 Berlin",
                         contractNumber: "DG-2024-89756",
+                        appointmentId: "ABX30",
+                        securityCode: "4821",
+                        technicianName: "Markus K.",
                         selectedSlot: {
                             date: "Mittwoch, 3. September",
                             time: "09:00 – 11:00"
@@ -864,7 +867,7 @@
                             timestamp: "2024-01-15T22:46:00.000Z"
                         },
                         {
-                            body: "✅ **Bestätigt**\n\n📅 Mittwoch, 3. September, 09:00 – 11:00\n🏠 CLARITY\n\n📲 Erinnerung gesendet.",
+                            body: "✅ **Bestätigt**\n\n📅 Mittwoch, 3. September, 09:00 – 11:00\n👨‍🔧 Techniker: Markus K.\n🆔 ID: ABX30\n🔐 Code: 4821 (auch beim Techniker)\n\n📲 Erinnerung gesendet.",
                             direction: "received",
                             timestamp: "2024-01-15T22:46:00.000Z"
                         }
@@ -1170,16 +1173,20 @@
                                  ]);
                              }, 1500);
                              this.currentStep = 3; // Cancelación
-                         } else if (message.includes("Status prüfen")) {
-                             const slotText = `${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}`;
-                             await this.addMessage(`📋 **Termin-Status:**
+                        } else if (message.includes("Status prüfen")) {
+                            const slotText = `${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}`;
+                            const id = this.appointmentData.appointmentId || 'ABX30';
+                            const code = this.appointmentData.securityCode || '4821';
+                            const tech = this.appointmentData.technicianName || 'Techniker';
+                            await this.addMessage(`📋 **Termin-Status:**
 
- ✅ Bestätigt
- 📅 ${slotText}
- 🏠 CLARITY
- 📲 Techniker zugewiesen`, 'received', 1000);
-                             this.currentStep = 4; // Estado
-                         }
+✅ Bestätigt
+📅 ${slotText}
+👨‍🔧 Techniker: ${tech}
+🆔 ID: ${id}
+🔐 Code: ${code} (auch beim Techniker)`, 'received', 1000);
+                            this.currentStep = 4; // Estado
+                        }
                          break;
                         
                                          case 2: // Modificación
@@ -1213,14 +1220,18 @@
                          break;
                          
                      case 3: // Cancelación
-                         if (message.includes("Ja, stornieren")) {
-                             await this.addMessage("❌ Ihr Termin wurde erfolgreich storniert.", 'received', 1000);
+                        if (message.includes("Ja, stornieren")) {
+                            const id = this.appointmentData.appointmentId || 'ABX30';
+                            const code = this.appointmentData.securityCode || '4821';
+                            await this.addMessage(`❌ Ihr Termin wurde erfolgreich storniert.\n\n🆔 ID: ${id}\n🔐 Code: ${code}`, 'received', 1000);
                              
                              // Mostrar teléfono del técnico y notificar cancelación
                              this.showTechnicianPhone();
                              
-                             setTimeout(async () => {
-                                 await this.addTechnicianMessage("🔔 **TERMIN STORNIERT**\n\n📋 Alejandro Herrera\n📅 Mittwoch, 3. September, 09:00 – 11:00\n🏠 Musterstraße 15, 10115 Berlin\n📞 +49 151 1947 0267\n\n❌ Termin wurde vom Kunden storniert.", 'received', 500);
+                            setTimeout(async () => {
+                                const id = this.appointmentData.appointmentId || 'ABX30';
+                                const code = this.appointmentData.securityCode || '4821';
+                                await this.addTechnicianMessage("🔔 **TERMIN STORNIERT**\n\n📋 Alejandro Herrera\n📅 Mittwoch, 3. September, 09:00 – 11:00\n🆔 ID: " + id + "\n🔐 Code: " + code + "\n🏠 Musterstraße 15, 10115 Berlin\n📞 +49 151 1947 0267\n\n❌ Termin wurde vom Kunden storniert.", 'received', 500);
                                  
                                  setTimeout(() => {
                                      this.addTechnicianMessage("Verstanden. Termin aus meinem Kalender entfernt.", 'sent', 1000);
@@ -1237,9 +1248,15 @@
                          }
                          break;
                          
-                     case 5: // Selección de fecha
-                         if (message.includes("Freitag, 5. September") || message.includes("Montag, 8. September")) {
-                             await this.addMessage("✅ Neues Datum ausgewählt. Wählen Sie eine neue Uhrzeit:", 'received', 1000);
+                    case 5: // Selección de fecha
+                        if (message.includes("Freitag, 5. September") || message.includes("Montag, 8. September")) {
+                            // Guardar la nueva fecha seleccionada para usarla más adelante
+                            if (message.includes("Freitag, 5. September")) {
+                                this.pendingNewDate = "Freitag, 5. September";
+                            } else if (message.includes("Montag, 8. September")) {
+                                this.pendingNewDate = "Montag, 8. September";
+                            }
+                            await this.addMessage("✅ Neues Datum ausgewählt. Wählen Sie eine neue Uhrzeit:", 'received', 1000);
                              setTimeout(() => {
                                  this.showQuickReplies([
                                      { text: "🕐 09:00 – 11:00" },
@@ -1257,18 +1274,26 @@
                          }
                          break;
                          
-                     case 6: // Selección de hora
-                         if (message.includes("09:00") || message.includes("13:00") || message.includes("15:00")) {
-                             await this.addMessage("✅ Ihr Termin wurde erfolgreich geändert.", 'received', 1000);
+                    case 6: // Selección de hora
+                        if (message.includes("09:00") || message.includes("13:00") || message.includes("15:00")) {
+                            const id = this.appointmentData.appointmentId || 'ABX30';
+                            const code = this.appointmentData.securityCode || '4821';
+                            // Determinar nueva hora y fecha
+                            const newTime = message.includes("09:00") ? "09:00 – 11:00" : 
+                                           message.includes("13:00") ? "13:00 – 15:00" : "15:00 – 17:00";
+                            const newDate = this.pendingNewDate || (this.appointmentData.selectedSlot && this.appointmentData.selectedSlot.date) || '';
+                            // Actualizar datos de la cita
+                            this.appointmentData.selectedSlot = { date: newDate || this.appointmentData.selectedSlot.date, time: newTime };
+                            await this.addMessage(`✅ Ihr Termin wurde erfolgreich geändert.\n\n📅 ${this.appointmentData.selectedSlot.date}, ${this.appointmentData.selectedSlot.time}\n🆔 ID: ${id}\n🔐 Code: ${code}`, 'received', 1000);
                              
                              // Mostrar teléfono del técnico y notificar cambio
                              this.showTechnicianPhone();
                              
                              setTimeout(async () => {
-                                 const newTime = message.includes("09:00") ? "09:00 – 11:00" : 
-                                                message.includes("13:00") ? "13:00 – 15:00" : "15:00 – 17:00";
-                                 
-                                 await this.addTechnicianMessage("🔔 **TERMIN GEÄNDERT**\n\n📋 Alejandro Herrera\n📅 Neues Datum ausgewählt\n🕐 Neue Zeit: " + newTime + "\n🏠 Musterstraße 15, 10115 Berlin\n📞 +49 151 1947 0267\n\n✅ Termin wurde vom Kunden geändert.", 'received', 500);
+                                const id = this.appointmentData.appointmentId || 'ABX30';
+                                const code = this.appointmentData.securityCode || '4821';
+                                const techDate = this.appointmentData.selectedSlot.date || newDate;
+                                await this.addTechnicianMessage("🔔 **TERMIN GEÄNDERT**\n\n📋 Alejandro Herrera\n📅 Neues Datum: " + techDate + "\n🕐 Neue Zeit: " + this.appointmentData.selectedSlot.time + "\n🆔 ID: " + id + "\n🔐 Code: " + code + "\n🏠 Musterstraße 15, 10115 Berlin\n📞 +49 151 1947 0267\n\n✅ Termin wurde vom Kunden geändert.", 'received', 500);
                                  
                                  setTimeout(() => {
                                      this.addTechnicianMessage("Verstanden. Neuen Termin in meinem Kalender aktualisiert.", 'sent', 1000);
