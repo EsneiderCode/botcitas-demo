@@ -87,3 +87,7 @@ typings/
 
 # Claude Code
 .claude/
+# Keep credentials out of every environment variant (including nested apps).
+.env
+.env.*
+!.env.example

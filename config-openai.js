@@ -1,8 +1,8 @@
 // Configuración de OpenAI para el bot de WhatsApp
-// IMPORTANTE: Reemplaza estos valores con tus credenciales reales
+// IMPORTANTE: Configura las credenciales solo en el .env del servidor
 
 // Configuración de OpenAI para el bot de WhatsApp
-// IMPORTANTE: Reemplaza estos valores con tus credenciales reales
+// IMPORTANTE: Configura las credenciales solo en el .env del servidor
 
 // Detectar si estamos en Node.js o en el navegador
 const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
@@ -18,8 +18,8 @@ if (isNode) {
 
 const OPENAI_CONFIG = {
     // Tu API Key de OpenAI - Obténla en: https://platform.openai.com/api-keys
-    // Puedes usar variables de entorno o configurar directamente aquí
-    apiKey: (isNode && process.env.OPENAI_API_KEY) || 'TU_API_KEY_AQUI',
+    // Solo variables de entorno del servidor; nunca escribas claves en este archivo
+    apiKey: (isNode && process.env.OPENAI_API_KEY) || '',
     
     // Modelo a usar (recomendado: gpt-4o-mini para mejor precio/rendimiento)
     model: (isNode && process.env.OPENAI_MODEL) || 'gpt-4o-mini',
@@ -47,8 +47,8 @@ function validateOpenAIConfig() {
         console.log('📝 Pasos para configurar:');
         console.log('1. Ve a https://platform.openai.com/api-keys');
         console.log('2. Crea una nueva API Key');
-        console.log('3. Reemplaza "TU_API_KEY_AQUI" con tu API Key real');
-        console.log('4. Recarga la página');
+        console.log('3. Configura OPENAI_API_KEY en el .env del servidor');
+        console.log('4. Reinicia el servidor');
         return false;
     }
     return true;
